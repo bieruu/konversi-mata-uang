@@ -1,6 +1,6 @@
 # 💱 Konversi Mata Uang CLI
 
-Aplikasi antarmuka baris perintah (CLI) sederhana yang dibangun dengan C++ untuk melakukan konversi mata uang secara cepat. Alat ini dirancang agar mudah digunakan, memungkinkan pengguna untuk mengkonversi nilai antara berbagai mata uang yang didukung serta melacak seluruh riwayat transaksi konversi dalam satu sesi.
+Aplikasi berbasis Command Line Interface (CLI) sederhana yang dibangun dengan C++ untuk melakukan konversi mata uang secara cepat. Alat ini dirancang agar mudah digunakan, memungkinkan pengguna untuk mengkonversi nilai antara berbagai mata uang yang didukung serta melacak seluruh riwayat transaksi konversi dalam satu sesi.
 
 ---
 
