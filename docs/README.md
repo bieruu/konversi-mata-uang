@@ -17,7 +17,7 @@
   </p>
 </div>
 
-Program konversi mata uang profesional dengan fitur update kurs otomatis dari API, penyimpanan riwayat, dan sistem modular yang mudah dikembangkan.
+Program konversi mata uang dengan fitur update kurs otomatis dari API, penyimpanan riwayat, dan sistem modular yang mudah dikembangkan.
 
 ## 🎯 Versi Saat Ini
 **v2.0.0** - Cross-Platform Release
@@ -49,16 +49,16 @@ konversi-mata-uang/
 ## ✨ Fitur Utama
 
 - ✅ **Cross-Platform**: Support Windows dan Linux
-- ✅ **Zero Setup**: Install otomatis, tidak perlu setup manual
+- ✅ **Zero Setup**: Install otomatis
 - ✅ **Update Kurs Otomatis**: Mengambil kurs real-time dari API
 - ✅ **Cache Lokal**: Menyimpan kurs untuk penggunaan offline
 - ✅ **Riwayat Konversi**: Menyimpan dan menampilkan riwayat konversi
 - ✅ **Error Handling**: Penanganan error yang baik
 - ✅ **Validasi Input**: Input lebih aman dan user-friendly
 - ✅ **One-Click Execution**: Cukup satu command untuk jalankan program
+- ✅ **Developer Friendly**: Mudah ditambahkan mata uang baru tanpa ubah kode
 - ✅ **Modular Architecture**: Sistem modular dengan CurrencyManager
 - ✅ **JSON Configuration**: Konfigurasi mata uang terpusat di file JSON
-- ✅ **Developer Friendly**: Mudah ditambahkan mata uang baru tanpa ubah kode
 - ✅ **Easy Currency Management**: Tambah/hapus mata uang secara langsung dari program
 
 ## 🚀 Instalasi & Penggunaan
@@ -101,8 +101,6 @@ install.bat
 src\Project.exe
 ```
 
-**Catatan**: Setelah instalasi berhasil, installer akan secara otomatis terhapus. Untuk menjalankan program selanjutnya, cukup gunakan `./run.sh` (Linux) atau `run.bat` (Windows).
-
 ### 📦 Prasyarat Manual
 - **Linux**: g++ compiler, libcpr-dev, nlohmann-json3-dev
 - **Windows**: MinGW, CPR library, Nlohmann JSON
@@ -134,7 +132,7 @@ Program uninstall menyediakan 3 pilihan：
    - **Keamanan**: Hanya menghapus dependencies yang aman dihapus (tidak digunakan oleh program lain)
    - **Auto Privilege Elevation**: Script secara otomatis meminta elevasi privilege jika diperlukan
 
-## 🏗️ Arsitektur Sistem
+## 🏗️ Arsitektur Program
 
 ### Sistem Modular dengan CurrencyManager
 
@@ -145,6 +143,12 @@ Program ini menggunakan arsitektur modular dengan komponen utama:
 - **Easy Currency Addition**: Developer bisa tambah/hapus mata uang tanpa ubah kode program
 - **Runtime Currency Management**: Tambah/hapus mata uang secara langsung dari program
 
+### Source Code (`src/`)
+- **`Project.cpp`**: Program utama dengan fitur API
+- **`currency_manager.h`**: Header CurrencyManager
+- **`currency_manager.cpp`**: Implementasi CurrencyManager
+- **`currency_config.json`**: Konfigurasi mata uang
+
 ### Struktur Data
 ```cpp
 struct Currency {
@@ -154,6 +158,14 @@ struct Currency {
     double rate;        // Kurs terhadap USD
 };
 ```
+
+### Scripts (`scripts/`)
+- **`install.sh`**: Installer Linux (Ubuntu/Debian/CentOS/Arch)
+- **`run.sh`**: Runner Linux
+- **`uninstall.sh`**: Uninstaller Linux
+- **`install.bat`**: Installer Windows (Chocolatey)
+- **`run.bat`**: Runner Windows
+- **`uninstall.bat`**: Uninstaller Windows
 
 ### API yang Digunakan
 - **Endpoint**: `https://api.exchangerate-api.com/v4/latest/USD`
