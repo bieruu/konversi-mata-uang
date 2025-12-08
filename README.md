@@ -168,7 +168,9 @@ struct Currency {
 | Platform | Installer | Compiler | Package Manager |
 |----------|-----------|----------|----------------|
 | Linux    | ✅        | g++      | apt/yum/pacman |
-| Windows  | ✅        | MinGW    | Chocolatey     |
+| Windows  | ⚠️        | MinGW    | Chocolatey     |
+
+**Catatan**: Program telah diuji dan berjalan lancar di Linux. Di Windows, mungkin diperlukan beberapa konfigurasi tambahan. Untuk bantuan atau perbaikan, silakan submit pull request atau issue di repository kontribusi.
 
 ## 📚 Dokumentasi
 
@@ -178,6 +180,244 @@ struct Currency {
 - **[Contributing.md](docs/Contributing.md)**: Panduan kontribusi & developer
 - **[CHANGELOG.md](docs/CHANGELOG.md)**: Riwayat perubahan
 - **[FlowChart.drawio.pdf](docs/FlowChart.drawio.pdf)**: Flowchart program
+
+## 📊 Analisis Teknis Mendalam
+
+### Arsitektur Sistem yang Cerdas
+
+Program ini menerapkan **prinsip modularitas** dan **separasi concern** yang sangat baik:
+
+1. **Separation of Concerns**:
+   - [`Project.cpp`](src/Project.cpp) berfokus pada logika bisnis dan UI
+   - [`CurrencyManager`](src/currency_manager.h) mengelola data dan operasi mata uang
+   - [`currency_config.json`](src/currency_config.json) menyimpan konfigurasi
+
+2. **Dependency Injection**:
+   - CurrencyManager menerima path file sebagai parameter konstruktor
+   - Memungkinkan testing dan fleksibilitas konfigurasi
+
+3. **Strategy Pattern**:
+   - Sistem cache dan API sebagai strategi berbeda untuk mendapatkan data
+   - Bisa dengan mudah ditambahkan strategi baru (file lokal, database, dll)
+
+### Sistem Manajemen Mata Uang yang Fleksibel
+
+#### JSON Configuration System
+```json
+{
+  "currencies": [
+    {
+      "name": "Indonesian Rupiah",
+      "symbol": "IDR",
+      "display": "Rp",
+      "default_rate": 17000.0,
+      "description": "Indonesian Rupiah"
+    }
+  ]
+}
+```
+
+**Keunggulan Sistem Konfigurasi:**
+- **Type Safety**: Validasi struktur JSON saat runtime
+- **Extensibility**: Mudah menambahkan field baru (deskripsi, kategori, dll)
+- **Version Control Friendly**: Perubahan konfigurasi tercatat di git
+- **Environment Specific**: Bisa punya config berbeda untuk development/production
+
+#### Runtime Currency Management
+```cpp
+// Tambah mata uang secara dinamis
+bool CurrencyManager::addCurrency(const Currency& currency) {
+    // Validasi duplikasi
+    // Update config file
+    // Simpan ke cache
+}
+```
+
+**Fitur Manajemen Runtime:**
+- **Validation**: Cegah duplikasi simbol mata uang
+- **Persistence**: Perubahan langsung disimpan ke file
+- **Real-time Update**: Langsung bisa digunakan tanpa restart
+
+### Sistem Cache yang Cerdas
+
+#### Cache Strategy
+```cpp
+bool CurrencyManager::isCacheExpired() const {
+    return cacheDate != getCurrentDate();
+}
+```
+
+**Cache Mechanism:**
+1. **Time-based Expiration**: Cache expired harian
+2. **Graceful Fallback**: API gagal → gunakan cache
+3. **Auto-refresh**: Update cache saat API berhasil
+4. **Storage Efficiency**: Format CSV sederhana, mudah dibaca
+
+#### Error Handling yang Komprehensif
+```cpp
+try {
+    cpr::Response r = cpr::Get(cpr::Url{"https://api.exchangerate-api.com/v4/latest/USD"});
+    // Proses response
+} catch (const exception& e) {
+    cout << "[ERROR] Exception: " << e.what() << "\n";
+    return false;
+}
+```
+
+**Error Handling Strategy:**
+- **Network Errors**: Timeout, connection refused, dll
+- **API Errors**: HTTP status codes, malformed JSON
+- **File Errors**: Permission denied, disk full
+- **User Errors**: Input invalid, format salah
+
+### Cross-Platform Installation System
+
+#### Linux Installation Strategy
+```bash
+# Multi-distro support
+if [ -f /etc/debian_version ]; then
+    DISTRO="debian"
+elif [ -f /etc/redhat-release ]; then
+    DISTRO="redhat"
+elif [ -f /etc/arch-release ]; then
+    DISTRO="arch"
+fi
+```
+
+**Installation Features:**
+1. **Distro Detection**: Otomatis deteksi Ubuntu, CentOS, Arch
+2. **Package Manager Integration**: apt, yum, pacman
+3. **Dependency Resolution**: Install compiler dan library
+4. **Auto-compilation**: Compile program setelah install dependencies
+5. **Cleanup**: Hapus installer setelah sukses
+
+#### Windows Installation Strategy
+```batch
+REM Chocolatey integration
+where /q choco
+if %ERRORLEVEL% NEQ 0 (
+    echo [INFO] Menginstall Chocolatey...
+    @"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
+)
+```
+
+**Windows Features:**
+1. **Package Manager**: Gunakan Chocolatey untuk consistency
+2. **Auto-elevation**: Minta admin rights saat dibutuhkan
+3. **Environment Setup**: PowerShell execution policy
+4. **Dependency Chain**: MinGW → CPR → Nlohmann JSON
+
+### Advanced Uninstall System
+
+#### Smart Dependency Management
+```bash
+# Cek apakah package masih digunakan
+cek_package_usage() {
+    if command -v dpkg &> /dev/null; then
+        local reverse_deps=$(apt-cache rdepends "$package" 2>/dev/null | grep -c "ii" || echo "0")
+        if [ "$reverse_deps" -gt 1 ]; then
+            return 1  # Masih digunakan oleh program lain
+        fi
+    fi
+    return 0  # Aman untuk dihapus
+}
+```
+
+**Uninstall Features:**
+1. **Dependency Safety**: Hanya hapus dependencies yang aman
+2. **Multi-option**: Normal, Masif, Lengkap
+3. **Auto-elevation**: Minta sudo/admin otomatis
+4. **Double Confirmation**: Konfirmasi ganda untuk operasi berbahaya
+5. **Error Logging**: Log semua error untuk debugging
+
+### Performance & Security Considerations
+
+#### Performance Optimizations
+1. **Lazy Loading**: Load config hanya saat dibutuhkan
+2. **Cache First**: Selalu cek cache sebelum request API
+3. **Efficient Data Structures**: Vector untuk akses cepat O(1)
+4. **Memory Management**: RAII dan smart pointers
+
+#### Security Measures
+1. **Input Validation**: Validasi semua input user
+2. **Path Security**: Cek existence file sebelum operasi
+3. **Permission Handling**: Auto-elevation privilege
+4. **Error Handling**: Jangan expose internal errors ke user
+
+### Developer Experience Excellence
+
+#### Easy Currency Addition
+```json
+{
+  "name": "Nama lengkap mata uang (contoh: 'Canadian Dollar')",
+  "symbol": "Kode mata uang sesuai standar ISO 4217 (contoh: 'CAD')",
+  "display": "Simbol yang ditampilkan ke user (contoh: 'C$')",
+  "default_rate": "Kurs default terhadap USD (contoh: 1.35)",
+  "description": "Deskripsi singkat mata uang (opsional)"
+}
+```
+
+**Developer Features:**
+1. **No Code Changes**: Cukup edit JSON untuk tambah mata uang
+2. **Validation**: Sistem validasi duplikasi dan format
+3. **Documentation**: Inline documentation di JSON
+4. **Best Practices**: Panduan penamaan dan struktur
+
+#### Modular Architecture Benefits
+1. **Testability**: Setiap modul bisa di-test terpisah
+2. **Maintainability**: Perubahan tidak mempengaruhi modul lain
+3. **Reusability**: CurrencyManager bisa dipakai di project lain
+4. **Scalability**: Mudah tambah fitur baru
+
+### API Integration Strategy
+
+#### Robust API Handling
+```cpp
+bool CurrencyManager::updateFromAPI() {
+    try {
+        cout << "[INFO] Menghubungi API...\n";
+        cpr::Response r = cpr::Get(cpr::Url{"https://api.exchangerate-api.com/v4/latest/USD"});
+        
+        if (r.status_code == 200) {
+            json data = json::parse(r.text);
+            if (data.contains("rates")) {
+                // Update semua mata uang
+                for (auto& currency : currencies) {
+                    if (rates.contains(currency.symbol)) {
+                        currency.rate = rates[currency.symbol];
+                    }
+                }
+                saveToCache();
+                return true;
+            }
+        }
+    } catch (const exception& e) {
+        cout << "[ERROR] Exception: " << e.what() << "\n";
+        return false;
+    }
+}
+```
+
+**API Strategy:**
+1. **Base Currency**: Gunakan USD sebagai base untuk konsistensi
+2. **Error Handling**: Catch semua exception network dan parsing
+3. **Partial Update**: Update hanya mata uang yang tersedia di API
+4. **Logging**: Informasi progress update
+5. **Fallback**: Gunakan cache jika API gagal
+
+### Best Practices Implementation
+
+#### Code Quality
+1. **Consistent Naming**: camelCase untuk variabel, PascalCase untuk class
+2. **Documentation**: Komentar Javadoc untuk semua fungsi
+3. **Error Messages**: Pesan error informatif dan actionable
+4. **Resource Management**: RAII dan proper cleanup
+
+#### Project Structure
+1. **Separation of Concerns**: UI, Business Logic, Data Management terpisah
+2. **Configuration Management**: Centralized configuration
+3. **Build System**: CMake support untuk professional build
+4. **Documentation**: Comprehensive docs di setiap aspek
 
 ## Troubleshooting
 
