@@ -1,0 +1,93 @@
+{
+  "version": "1.0",
+  "base_currency": "USD",
+  "last_updated": "2025-12-08",
+  "currencies": [
+    {
+      "name": "Indonesian Rupiah",
+      "symbol": "IDR",
+      "display": "Rp",
+      "default_rate": 17000.0,
+      "description": "Indonesian Rupiah"
+    },
+    {
+      "name": "US Dollar",
+      "symbol": "USD",
+      "display": "$",
+      "default_rate": 1.0,
+      "description": "United States Dollar"
+    },
+    {
+      "name": "Malaysian Ringgit",
+      "symbol": "MYR",
+      "display": "RM",
+      "default_rate": 4.5,
+      "description": "Malaysian Ringgit"
+    },
+    {
+      "name": "Japanese Yen",
+      "symbol": "JPY",
+      "display": "¥",
+      "default_rate": 150.0,
+      "description": "Japanese Yen"
+    },
+    {
+      "name": "Euro",
+      "symbol": "EUR",
+      "display": "€",
+      "default_rate": 0.92,
+      "description": "Euro"
+    },
+    {
+      "name": "British Pound",
+      "symbol": "GBP",
+      "display": "£",
+      "default_rate": 0.78,
+      "description": "British Pound Sterling"
+    },
+    {
+      "name": "Singapore Dollar",
+      "symbol": "SGD",
+      "display": "S$",
+      "default_rate": 1.35,
+      "description": "Singapore Dollar"
+    },
+    {
+      "name": "Thai Baht",
+      "symbol": "THB",
+      "display": "฿",
+      "default_rate": 36.5,
+      "description": "Thai Baht"
+    },
+    {
+      "name": "Australian Dollar",
+      "symbol": "AUD",
+      "display": "A$",
+      "default_rate": 1.5,
+      "description": "Australian Dollar"
+    },
+    {
+      "name": "Chinese Yuan",
+      "symbol": "CNY",
+      "display": "¥",
+      "default_rate": 7.2,
+      "description": "Chinese Yuan Renminbi"
+    }
+  ],
+  "instructions": {
+    "how_to_add_currency": "Untuk menambahkan mata uang baru, tambahkan objek baru ke dalam array 'currencies' dengan format berikut:",
+    "format": {
+      "name": "Nama lengkap mata uang (contoh: 'Canadian Dollar')",
+      "symbol": "Kode mata uang sesuai standar ISO 4217 (contoh: 'CAD')",
+      "display": "Simbol yang ditampilkan ke user (contoh: 'C$')",
+      "default_rate": "Kurs default terhadap USD (contoh: 1.35)",
+      "description": "Deskripsi singkat mata uang (opsional)"
+    },
+    "notes": [
+      "1. Pastikan simbol unik dan tidak duplikat",
+      "2. Simbol harus sesuai standar ISO 4217 untuk kompatibilitas API",
+      "3. Default rate digunakan saat cache expired dan API tidak tersedia",
+      "4. Program akan otomatis mengupdate kurs dari API saat tersedia"
+    ]
+  }
+}
