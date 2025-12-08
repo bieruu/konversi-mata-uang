@@ -1,22 +1,5 @@
 # Program Konversi Mata Uang
 
-<div align="center">
-  <p>
-    <a href="#instalasi">
-      <img src="https://img.shields.io/badge/Install-Auto-brightgreen?style=for-the-badge&logo=appveyor" alt="Auto Install">
-    </a>
-    <a href="#fitur-utama">
-      <img src="https://img.shields.io/badge/Platform-Cross--Platform-blue?style=for-the-badge&logo=appveyor" alt="Cross Platform">
-    </a>
-    <a href="#versi">
-      <img src="https://img.shields.io/badge/Version-2.0.0-orange?style=for-the-badge&logo=appveyor" alt="Version">
-    </a>
-    <a href="#lisensi">
-      <img src="https://img.shields.io/badge/License-MIT-brightgreen?style=for-the-badge&logo=appveyor" alt="License">
-    </a>
-  </p>
-</div>
-
 Program konversi mata uang profesional dengan fitur update kurs otomatis dari API, penyimpanan riwayat, dan sistem modular yang mudah dikembangkan.
 
 ## 🎯 Versi Saat Ini
