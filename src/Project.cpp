@@ -60,6 +60,18 @@ int main()
     
     // Inisialisasi analytics logger
     AnalyticsLogger analytics;
+    
+    // Update kurs dari API saat program dimulai
+    cout << "\n[SISTEM] Memperbarui kurs mata uang dari API saat startup...\n";
+    if (updateExchangeRates(currencies)) {
+        saveCurrenciesToFile(currencies);
+        cout << "[INFO] Kurs berhasil diperbarui dari API!\n";
+        
+        // Log aktivitas update API
+        analytics.logAPIUpdate(currencies.size());
+    } else {
+        cout << "[INFO] Gagal update dari API, menggunakan cache/data default...\n";
+    }
 
     while (jalan)
     {
