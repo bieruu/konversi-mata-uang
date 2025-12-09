@@ -338,29 +338,25 @@ int main()
             cout << "\n+===============================================+\n";
             cout << "|              BANTUAN & INFORMASI              |\n";
             cout << "+===============================================+\n";
-            cout << "| Program ini digunakan untuk mengonversi mata  |\n";
-            cout << "| uang antar negara dengan kurs terupdate dari   |\n";
-            cout << "| API.                                          |\n";
-            cout << "+-----------------------------------------------+\n";
-            cout << "| Fitur Utama:                                  |\n";
-            cout << "| 1. Konversi mata uang                          |\n";
-            cout << "| 2. Riwayat konversi                            |\n";
-            cout << "| 3. Update kurs dari API                        |\n";
-            cout << "| 4. Dashboard analitik                          |\n";
-            cout << "| 5. Laporan detail                              |\n";
-            cout << "+-----------------------------------------------+\n";
-            cout << "| Tips:                                         |\n";
-            cout << "| - Pastikan koneksi internet stabil            |\n";
-            cout << "| - Update kurs secara berkala                    |\n";
-            cout << "| - Gunakan simbol mata uang yang benar         |\n";
-            cout << "+-----------------------------------------------+\n";
-            cout << "| Mata Uang yang Didukung:                      |\n";
+            cout << "Program ini digunakan untuk mengonversi mata uang\n";
+            cout << "antar negara dengan kurs terupdate dari API.\n";
+            cout << "\nFitur Utama:\n";
+            cout << "1. Konversi mata uang\n";
+            cout << "2. Riwayat konversi\n";
+            cout << "3. Update kurs dari API\n";
+            cout << "4. Dashboard analitik\n";
+            cout << "5. Laporan detail\n";
+            cout << "\nTips:\n";
+            cout << "- Pastikan koneksi internet stabil\n";
+            cout << "- Update kurs secara berkala\n";
+            cout << "- Gunakan simbol mata uang yang benar\n";
+            cout << "\nMata Uang yang Didukung:\n";
             
             // Tampilkan daftar mata uang yang didukung secara dinamis
             for (int i = 0; i < (int)currencies.size(); i++) {
-                cout << "| - " << currencies[i].symbol << " (" << currencies[i].name << ") - " << currencies[i].display << "                |\n";
+                cout << "- " << currencies[i].symbol << " (" << currencies[i].name << ") - " << currencies[i].display << "\n";
             }
-            cout << "+===============================================+\n";
+            cout << "\n+===============================================+\n";
 
             cout << "\nTekan ENTER untuk melanjutkan...";
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
