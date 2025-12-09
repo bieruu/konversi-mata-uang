@@ -15,7 +15,7 @@ konversi-mata-uang/
 │   └── currency_config.json      # Konfigurasi mata uang
 ├── scripts/                      # Installer dan runner
 │   ├── install.sh                # Installer Linux
-│   ├── run.sh                    # Runner Linux
+│   ├── run.sh                    # Runner Linux (deprecated - use ./Project instead)
 │   ├── uninstall.sh              # Uninstaller Linux
 │   ├── install.bat               # Installer Windows
 │   ├── run.bat                   # Runner Windows
@@ -82,7 +82,7 @@ install.bat
 Project.exe
 ```
 
-**Catatan**: Setelah instalasi berhasil, installer akan secara otomatis terhapus. Untuk menjalankan program selanjutnya, cukup gunakan `./run.sh` (Linux) atau `run.bat` (Windows).
+**Catatan**: Setelah instalasi berhasil, installer akan secara otomatis terhapus. Untuk menjalankan program selanjutnya, cukup gunakan `./Project` (Linux) atau `Project.exe` (Windows).
 
 ### 📦 Prasyarat Manual
 - **Linux**: g++ compiler, libcpr-dev, nlohmann-json3-dev

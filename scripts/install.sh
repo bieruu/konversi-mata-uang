@@ -142,7 +142,7 @@ if [ $? -eq 0 ]; then
     echo "Program siap digunakan!"
     echo ""
     echo "Cara menjalankan:"
-    echo "  ./run.sh"
+    echo "  ./Project"
     echo ""
     echo "File yang dibuat:"
     echo "  - Project (executable)"
@@ -175,7 +175,7 @@ if [ $? -eq 0 ]; then
     
     echo ""
     echo "✅ Instalasi selesai! Sekarang Anda hanya perlu menjalankan:"
-    echo "   ./run.sh"
+    echo "   ./Project"
     echo ""
 else
     echo ""
