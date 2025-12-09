@@ -25,52 +25,40 @@ bool AnalyticsLogger::loadLogs() {
         return false;
     }
     
-    json data;
-    try {
-        file >> data;
-        file.close();
+    string line;
+    while (getline(file, line)) {
+        if (line.empty()) continue;
         
-        if (data.contains("logs")) {
-            logs = data["logs"].get<vector<ActivityLog>>();
-            
-            // Rebuild analytics from logs
-            for (const auto& log : logs) {
-                updateAnalytics(log);
-            }
-        }
-    } catch (const exception& e) {
-        cout << "[WARNING] Gagal membaca file log: " << e.what() << endl;
-        return false;
+        ActivityLog log;
+        stringstream ss(line);
+        string temp;
+        
+        // Parse log format: timestamp|type|details|amount|from|to
+        getline(ss, log.timestamp, '|');
+        getline(ss, log.activity_type, '|');
+        getline(ss, log.details, '|');
+        getline(ss, temp, '|');
+        log.amount = stod(temp);
+        getline(ss, log.from_currency, '|');
+        getline(ss, log.to_currency, '|');
+        
+        logs.push_back(log);
+        updateAnalytics(log);
     }
     
+    file.close();
     return true;
 }
 
 void AnalyticsLogger::saveLogToFile(const ActivityLog& log) {
-    ofstream file(log_file);
+    ofstream file(log_file, ios::app);
     if (file.is_open()) {
-        json data;
-        
-        // Load existing data if exists
-        ifstream read_file(log_file);
-        if (read_file.is_open()) {
-            try {
-                read_file >> data;
-            } catch (...) {
-                // File kosong atau corrupt, buat data baru
-                data = json::object();
-            }
-            read_file.close();
-        }
-        
-        // Tambahkan log baru
-        if (!data.contains("logs")) {
-            data["logs"] = json::array();
-        }
-        data["logs"].push_back(log);
-        
-        // Simpan kembali
-        file << data.dump(2);
+        file << log.timestamp << "|"
+             << log.activity_type << "|"
+             << log.details << "|"
+             << log.amount << "|"
+             << log.from_currency << "|"
+             << log.to_currency << endl;
         file.close();
     }
 }
@@ -227,7 +215,7 @@ void AnalyticsLogger::generateDetailedReport() {
     // Statistik lebih detail
     cout << "\n| Statistik Detail:                              |\n";
     cout << "+-----------------------------------------------+\n";
-    cout << "| Rata-rata konversi per hari: " << setw(12) 
+    cout << "| Rata-rata konversi per hari: " << setw(12)
          << (total_conversions / max(1, (int)daily_activity.size())) << " |\n";
     cout << "| Rata-rata update API per hari: " << setw(11)
          << (total_api_updates / max(1, (int)daily_activity.size())) << " |\n";
@@ -237,33 +225,41 @@ void AnalyticsLogger::generateDetailedReport() {
 }
 
 void AnalyticsLogger::exportAnalytics(const string& filename) {
-    json export_data;
-    
-    export_data["export_date"] = getCurrentTimestamp();
-    export_data["total_stats"]["total_conversions"] = total_conversions;
-    export_data["total_stats"]["total_api_updates"] = total_api_updates;
-    export_data["total_stats"]["total_history_views"] = total_history_views;
-    export_data["total_stats"]["total_activities"] = logs.size();
-    export_data["total_stats"]["total_amount_converted"] = getTotalAmountConverted();
-    export_data["total_stats"]["most_used_currency"] = getMostUsedCurrency();
-    
-    // Top currencies
-    auto top_currencies = getTopCurrencies(10);
-    for (const auto& currency : top_currencies) {
-        export_data["top_currencies"][currency.first] = currency.second;
-    }
-    
-    // Daily activity
-    for (const auto& day : daily_activity) {
-        export_data["daily_activity"][day.first] = day.second;
-    }
-    
-    // All logs
-    export_data["logs"] = logs;
-    
     ofstream file(filename);
     if (file.is_open()) {
-        file << export_data.dump(2);
+        file << "=== ANALYTICS EXPORT REPORT ===" << endl;
+        file << "Export Date: " << getCurrentTimestamp() << endl;
+        file << endl;
+        
+        file << "=== TOTAL STATISTICS ===" << endl;
+        file << "Total Conversions: " << total_conversions << endl;
+        file << "Total API Updates: " << total_api_updates << endl;
+        file << "Total History Views: " << total_history_views << endl;
+        file << "Total Activities: " << logs.size() << endl;
+        file << "Total Amount Converted: " << getTotalAmountConverted() << endl;
+        file << "Most Used Currency: " << getMostUsedCurrency() << endl;
+        file << endl;
+        
+        file << "=== TOP CURRENCIES ===" << endl;
+        auto top_currencies = getTopCurrencies(10);
+        for (const auto& currency : top_currencies) {
+            file << currency.first << ": " << currency.second << endl;
+        }
+        file << endl;
+        
+        file << "=== DAILY ACTIVITY ===" << endl;
+        for (const auto& day : daily_activity) {
+            file << day.first << ": " << day.second << endl;
+        }
+        file << endl;
+        
+        file << "=== ALL LOGS ===" << endl;
+        for (const auto& log : logs) {
+            file << log.timestamp << " | " << log.activity_type << " | "
+                 << log.details << " | " << log.amount << " | "
+                 << log.from_currency << " | " << log.to_currency << endl;
+        }
+        
         file.close();
         cout << "[SUCCESS] Data analitik berhasil diekspor ke " << filename << endl;
     } else {
@@ -302,7 +298,7 @@ vector<pair<string, int>> AnalyticsLogger::getTopCurrencies(int limit) const {
         result.push_back({currency.first, currency.second});
     }
     
-    sort(result.begin(), result.end(), 
+    sort(result.begin(), result.end(),
          [](const pair<string, int>& a, const pair<string, int>& b) {
              return a.second > b.second;
          });

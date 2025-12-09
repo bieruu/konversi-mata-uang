@@ -10,10 +10,8 @@
 #include <algorithm>
 #include <iomanip>
 #include <sstream>
-#include <nlohmann/json.hpp>
 
 using namespace std;
-using json = nlohmann::json;
 
 // Struktur data untuk logging aktivitas
 struct ActivityLog {
@@ -44,7 +42,7 @@ private:
     void updateAnalytics(const ActivityLog& log);
     
 public:
-    AnalyticsLogger(const string& log_path = "analytics_log.json");
+    AnalyticsLogger(const string& log_path = "analytics_log.txt");
     ~AnalyticsLogger();
     
     // Logging functions
