@@ -120,15 +120,13 @@ fi
 # Coba beberapa opsi compile dengan library yang tersedia
 echo "[INFO] Mencoba compile dengan library yang tersedia..."
 
-# Cek apakah header nlohmann_json ada
-if [ -f "/usr/include/nlohmann/json.hpp" ] || [ -f "/usr/local/include/nlohmann/json.hpp" ]; then
-    echo "[INFO] Header nlohmann_json ditemukan"
-    # Compile tanpa -lnlohmann_json (header-only library)
+# Compile dengan semua source files
+g++ -o Project "$PROJECT_CPP" src/analytics_logger.cpp -std=c++17 -lcpr
+
+# Jika compile gagal, coba tanpa analytics_logger
+if [ $? -ne 0 ]; then
+    echo "[WARNING] Compile dengan analytics_logger gagal, mencoba tanpa analytics..."
     g++ -o Project "$PROJECT_CPP" -std=c++17 -lcpr
-else
-    echo "[INFO] Header nlohmann_json tidak ditemukan, mencoba alternatif..."
-    # Coba compile dengan opsi lain
-    g++ -o Project "$PROJECT_CPP" -std=c++17 -lcpr -lnlohmann_json
 fi
 
 if [ $? -eq 0 ]; then
@@ -149,6 +147,7 @@ if [ $? -eq 0 ]; then
     echo "File yang dibuat:"
     echo "  - Project (executable)"
     echo "  - currency_cache.txt (cache kurs)"
+    echo "  - analytics_log.txt (log aktivitas)"
     echo ""
     echo "Catatan penting:"
     echo "  - Jika program tidak bisa dijalankan, coba: sudo ldconfig"
@@ -189,5 +188,8 @@ else
     echo "  - libcpr-dev"
     echo "  - nlohmann-json3-dev"
     echo "  - build-essential (g++)"
+    echo ""
+    echo "Coba compile manual:"
+    echo "  g++ -o Project src/Project.cpp src/analytics_logger.cpp -std=c++17 -lcpr"
     exit 1
 fi
