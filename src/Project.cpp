@@ -10,6 +10,7 @@
 #include <ctime>
 #include <nlohmann/json.hpp>
 #include <cpr/cpr.h>
+#include "analytics_logger.h"
 
 using namespace std;
 using json = nlohmann::json;
@@ -56,6 +57,9 @@ int main()
     int mu1, mu2;
     double input;
     string inputStr;
+    
+    // Inisialisasi analytics logger
+    AnalyticsLogger analytics;
 
     while (jalan)
     {
@@ -68,8 +72,10 @@ int main()
         cout << "|  [1] Konversi Mata Uang              |\n";
         cout << "|  [2] Lihat Riwayat Konversi          |\n";
         cout << "|  [3] Update Kurs Mata Uang           |\n";
-        cout << "|  [4] Bantuan & Informasi             |\n";
-        cout << "|  [5] Keluar Program                  |\n";
+        cout << "|  [4] Dashboard Analitik              |\n";
+        cout << "|  [5] Laporan Detail                  |\n";
+        cout << "|  [6] Bantuan & Informasi             |\n";
+        cout << "|  [7] Keluar Program                  |\n";
         cout << "+======================================+\n";
         cout << "Pilih menu (1-5): ";
 
@@ -235,6 +241,14 @@ int main()
                 << " = "
                 << currencies[mu2 - 1].display << output << " (" << currencies[mu2 - 1].name << ")";
             riwayat.push_back(oss.str());
+            
+            // Log aktivitas konversi
+            analytics.logConversion(
+                currencies[mu1 - 1].symbol,
+                currencies[mu2 - 1].symbol,
+                input,
+                oss.str()
+            );
         }
 
         //==== RIWAYAT ====
@@ -256,6 +270,9 @@ int main()
                 }
             }
 
+            // Log aktivitas melihat riwayat
+            analytics.logHistoryView();
+
             cout << "\nTekan ENTER untuk melanjutkan...";
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cin.get();
@@ -268,6 +285,9 @@ int main()
             if (updateExchangeRates(currencies)) {
                 saveCurrenciesToFile(currencies);
                 cout << "[INFO] Kurs telah diperbarui dari API!\n";
+                
+                // Log aktivitas update API
+                analytics.logAPIUpdate(currencies.size());
             } else {
                 cout << "[INFO] Gagal update dari API, menggunakan cache...\n";
             }
@@ -277,8 +297,30 @@ int main()
             cin.get();
         }
 
-        //==== BANTUAN ====
+        //==== DASHBOARD ANALITIK ====
         else if (pilihan == 4)
+        {
+            cout << "\n[SISTEM] Menampilkan dashboard analitik...\n";
+            analytics.generateDashboard();
+            
+            cout << "\nTekan ENTER untuk melanjutkan...";
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cin.get();
+        }
+        
+        //==== LAPORAN DETAIL ====
+        else if (pilihan == 5)
+        {
+            cout << "\n[SISTEM] Menampilkan laporan analitik detail...\n";
+            analytics.generateDetailedReport();
+            
+            cout << "\nTekan ENTER untuk melanjutkan...";
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cin.get();
+        }
+
+        //==== BANTUAN ====
+        else if (pilihan == 6)
         {
             cout << "\n+===============================================+\n";
             cout << "|              BANTUAN & INFORMASI              |\n";
@@ -291,6 +333,8 @@ int main()
             cout << "| 1. Konversi mata uang                          |\n";
             cout << "| 2. Riwayat konversi                            |\n";
             cout << "| 3. Update kurs dari API                        |\n";
+            cout << "| 4. Dashboard analitik                          |\n";
+            cout << "| 5. Laporan detail                              |\n";
             cout << "+-----------------------------------------------+\n";
             cout << "| Tips:                                         |\n";
             cout << "| - Pastikan koneksi internet stabil            |\n";
@@ -316,7 +360,7 @@ int main()
         }
 
         //==== KELUAR ====
-        else if (pilihan == 5)
+        else if (pilihan == 7)
         {
             cout << "\nTerima Kasih telah menggunakan program konversi mata uang!\n";
             cout << "Jika mengalami masalah, silakan coba:\n";
@@ -327,7 +371,7 @@ int main()
 
         else
         {
-            cout << "[ERROR] Pilihan tidak Valid. Silakan pilih 1-5.\n";
+            cout << "[ERROR] Pilihan tidak Valid. Silakan pilih 1-7.\n";
             
             cout << "\nTekan ENTER untuk melanjutkan...";
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -344,6 +388,23 @@ string getCurrentDate() {
     char dateStr[11];
     strftime(dateStr, sizeof(dateStr), "%Y-%m-%d", ltm);
     return string(dateStr);
+}
+
+// Fungsi untuk ekspor data analitik
+void exportAnalyticsData(AnalyticsLogger& analytics) {
+    string filename;
+    cout << "\nMasukkan nama file untuk ekspor data (contoh: analytics_export.json): ";
+    cin >> filename;
+    
+    if (filename.empty()) {
+        filename = "analytics_export_" + getCurrentDate() + ".json";
+    }
+    
+    analytics.exportAnalytics(filename);
+    
+    cout << "\nTekan ENTER untuk melanjutkan...";
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    cin.get();
 }
 
 // Fungsi untuk memeriksa apakah cache sudah expired (lebih dari 1 jam)
