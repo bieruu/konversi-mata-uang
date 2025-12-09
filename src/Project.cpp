@@ -35,7 +35,8 @@ const vector<Currency> DEFAULT_CURRENCIES = {
     {"Singapore Dollar", "SGD", "S$", 1.35},
     {"Thai Baht", "THB", "฿", 36.5},
     {"Australian Dollar", "AUD", "A$", 1.5},
-    {"Chinese Yuan", "CNY", "¥", 7.2}
+    {"Chinese Yuan", "CNY", "¥", 7.2},
+    {"Korean Won", "KRW", "₩", 1350.0}
 };
 
 // Fungsi deklarasi
@@ -354,16 +355,11 @@ int main()
             cout << "| - Gunakan simbol mata uang yang benar         |\n";
             cout << "+-----------------------------------------------+\n";
             cout << "| Mata Uang yang Didukung:                      |\n";
-            cout << "| - IDR (Indonesian Rupiah) - Rp                |\n";
-            cout << "| - USD (US Dollar) - $                         |\n";
-            cout << "| - MYR (Malaysian Ringgit) - RM                |\n";
-            cout << "| - JPY (Japanese Yen) - ¥                      |\n";
-            cout << "| - EUR (Euro) - €                              |\n";
-            cout << "| - GBP (British Pound) - £                     |\n";
-            cout << "| - SGD (Singapore Dollar) - S$                 |\n";
-            cout << "| - THB (Thai Baht) - ฿                         |\n";
-            cout << "| - AUD (Australian Dollar) - A$                |\n";
-            cout << "| - CNY (Chinese Yuan) - ¥                      |\n";
+            
+            // Tampilkan daftar mata uang yang didukung secara dinamis
+            for (int i = 0; i < (int)currencies.size(); i++) {
+                cout << "| - " << currencies[i].symbol << " (" << currencies[i].name << ") - " << currencies[i].display << "                |\n";
+            }
             cout << "+===============================================+\n";
 
             cout << "\nTekan ENTER untuk melanjutkan...";
