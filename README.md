@@ -15,7 +15,7 @@ konversi-mata-uang/
 │   └── currency_config.json      # Konfigurasi mata uang
 ├── scripts/                      # Installer dan runner
 │   ├── install.sh                # Installer Linux
-│   ├── run.sh                    # Runner Linux
+│   ├── run.sh                    # Runner Linux (deprecated - use ./Project instead)
 │   ├── uninstall.sh              # Uninstaller Linux
 │   ├── install.bat               # Installer Windows
 │   ├── run.bat                   # Runner Windows
@@ -50,41 +50,39 @@ konversi-mata-uang/
 
 #### Untuk Linux (Ubuntu/Debian/CentOS/Arch):
 ```bash
-./run.sh
+./Project
 ```
 
 #### Untuk Windows:
 ```cmd
-run.bat
+Project.exe
 ```
 
-**Hanya itu!** Semuanya otomatis:
-- Install package manager (jika belum)
-- Install compiler dan library
-- Compile program
-- Langsung jalan!
+**Catatan**: Pastikan program sudah di-compile terlebih dahulu menggunakan:
+- Linux: `./install.sh`
+- Windows: `install.bat`
 
 ### 🛠️ Cara Manual
 
 #### Linux:
 ```bash
-# 1. Install library
+# 1. Install library dan compile
 ./install.sh
 
 # 2. Jalankan program
-./src/Project
+./Project
 ```
 
 #### Windows:
 ```cmd
-# 1. Install library (sebagai Administrator)
+# 1. Install library dan compile (sebagai Administrator)
 install.bat
 
 # 2. Jalankan program
-src\Project.exe
+Project.exe
 ```
 
-**Catatan**: Setelah instalasi berhasil, installer akan secara otomatis terhapus. Untuk menjalankan program selanjutnya, cukup gunakan `./run.sh` (Linux) atau `run.bat` (Windows).
+**Catatan**: Setelah instalasi berhasil, installer akan secara otomatis terhapus. Untuk menjalankan program selanjutnya, cukup gunakan `./Project` (Linux) atau `Project.exe` (Windows).
 
 ### 📦 Prasyarat Manual
 - **Linux**: g++ compiler, libcpr-dev, nlohmann-json3-dev
@@ -180,6 +178,22 @@ struct Currency {
 - **[Contributing.md](docs/Contributing.md)**: Panduan kontribusi & developer
 - **[CHANGELOG.md](docs/CHANGELOG.md)**: Riwayat perubahan
 - **[FlowChart.drawio.pdf](docs/FlowChart.drawio.pdf)**: Flowchart program
+
+## 🚀 Cara Menjalankan Program
+
+Setelah instalasi selesai, program dapat dijalankan secara langsung:
+
+### Linux
+```bash
+./Project
+```
+
+### Windows
+```cmd
+Project.exe
+```
+
+**Catatan**: Pastikan Anda telah menjalankan proses instalasi terlebih dahulu untuk mengcompile program.
 
 ## 📊 Analisis Teknis Mendalam
 

@@ -72,6 +72,13 @@
       "display": "¥",
       "default_rate": 7.2,
       "description": "Chinese Yuan Renminbi"
+    },
+    {
+      "name": "Korean Won",
+      "symbol": "KRW",
+      "display": "₩",
+      "default_rate": 1350.0,
+      "description": "South Korean Won"
     }
   ],
   "instructions": {

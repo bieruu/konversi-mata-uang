@@ -10,6 +10,7 @@
 #include <ctime>
 #include <nlohmann/json.hpp>
 #include <cpr/cpr.h>
+#include "analytics_logger.h"
 
 using namespace std;
 using json = nlohmann::json;
@@ -34,7 +35,8 @@ const vector<Currency> DEFAULT_CURRENCIES = {
     {"Singapore Dollar", "SGD", "S$", 1.35},
     {"Thai Baht", "THB", "฿", 36.5},
     {"Australian Dollar", "AUD", "A$", 1.5},
-    {"Chinese Yuan", "CNY", "¥", 7.2}
+    {"Chinese Yuan", "CNY", "¥", 7.2},
+    {"Korean Won", "KRW", "₩", 1350.0}
 };
 
 // Fungsi deklarasi
@@ -46,16 +48,33 @@ bool isCacheExpired();
 string getCurrentDate();
 string getCurrencyName(const string& symbol);
 string getDisplaySymbol(const string& symbol);
+void saveHistoryToFile(const vector<string>& history);
+vector<string> loadHistoryFromFile();
 
 int main()
 {
     vector<Currency> currencies = loadCurrencies();
-    vector<string> riwayat;
+    vector<string> riwayat = loadHistoryFromFile();  // Load previous history
     bool jalan = true;
     int pilihan;
     int mu1, mu2;
     double input;
     string inputStr;
+    
+    // Inisialisasi analytics logger
+    AnalyticsLogger analytics;
+    
+    // Update kurs dari API saat program dimulai
+    cout << "\n[SISTEM] Memperbarui kurs mata uang dari API saat startup...\n";
+    if (updateExchangeRates(currencies)) {
+        saveCurrenciesToFile(currencies);
+        cout << "[INFO] Kurs berhasil diperbarui dari API!\n";
+        
+        // Log aktivitas update API
+        analytics.logAPIUpdate(currencies.size());
+    } else {
+        cout << "[INFO] Gagal update dari API, menggunakan cache/data default...\n";
+    }
 
     while (jalan)
     {
@@ -68,8 +87,10 @@ int main()
         cout << "|  [1] Konversi Mata Uang              |\n";
         cout << "|  [2] Lihat Riwayat Konversi          |\n";
         cout << "|  [3] Update Kurs Mata Uang           |\n";
-        cout << "|  [4] Bantuan & Informasi             |\n";
-        cout << "|  [5] Keluar Program                  |\n";
+        cout << "|  [4] Dashboard Analitik              |\n";
+        cout << "|  [5] Laporan Detail                  |\n";
+        cout << "|  [6] Bantuan & Informasi             |\n";
+        cout << "|  [7] Keluar Program                  |\n";
         cout << "+======================================+\n";
         cout << "Pilih menu (1-5): ";
 
@@ -235,6 +256,17 @@ int main()
                 << " = "
                 << currencies[mu2 - 1].display << output << " (" << currencies[mu2 - 1].name << ")";
             riwayat.push_back(oss.str());
+            
+            // Save history to file after each conversion
+            saveHistoryToFile(riwayat);
+            
+            // Log aktivitas konversi
+            analytics.logConversion(
+                currencies[mu1 - 1].symbol,
+                currencies[mu2 - 1].symbol,
+                input,
+                oss.str()
+            );
         }
 
         //==== RIWAYAT ====
@@ -256,6 +288,9 @@ int main()
                 }
             }
 
+            // Log aktivitas melihat riwayat
+            analytics.logHistoryView();
+
             cout << "\nTekan ENTER untuk melanjutkan...";
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cin.get();
@@ -268,6 +303,9 @@ int main()
             if (updateExchangeRates(currencies)) {
                 saveCurrenciesToFile(currencies);
                 cout << "[INFO] Kurs telah diperbarui dari API!\n";
+                
+                // Log aktivitas update API
+                analytics.logAPIUpdate(currencies.size());
             } else {
                 cout << "[INFO] Gagal update dari API, menggunakan cache...\n";
             }
@@ -277,38 +315,53 @@ int main()
             cin.get();
         }
 
-        //==== BANTUAN ====
+        //==== DASHBOARD ANALITIK ====
         else if (pilihan == 4)
+        {
+            cout << "\n[SISTEM] Menampilkan dashboard analitik...\n";
+            analytics.generateDashboard();
+            
+            cout << "\nTekan ENTER untuk melanjutkan...";
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cin.get();
+        }
+        
+        //==== LAPORAN DETAIL ====
+        else if (pilihan == 5)
+        {
+            cout << "\n[SISTEM] Menampilkan laporan analitik detail...\n";
+            analytics.generateDetailedReport();
+            
+            cout << "\nTekan ENTER untuk melanjutkan...";
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cin.get();
+        }
+
+        //==== BANTUAN ====
+        else if (pilihan == 6)
         {
             cout << "\n+===============================================+\n";
             cout << "|              BANTUAN & INFORMASI              |\n";
             cout << "+===============================================+\n";
-            cout << "| Program ini digunakan untuk mengonversi mata  |\n";
-            cout << "| uang antar negara dengan kurs terupdate dari   |\n";
-            cout << "| API.                                          |\n";
-            cout << "+-----------------------------------------------+\n";
-            cout << "| Fitur Utama:                                  |\n";
-            cout << "| 1. Konversi mata uang                          |\n";
-            cout << "| 2. Riwayat konversi                            |\n";
-            cout << "| 3. Update kurs dari API                        |\n";
-            cout << "+-----------------------------------------------+\n";
-            cout << "| Tips:                                         |\n";
-            cout << "| - Pastikan koneksi internet stabil            |\n";
-            cout << "| - Update kurs secara berkala                    |\n";
-            cout << "| - Gunakan simbol mata uang yang benar         |\n";
-            cout << "+-----------------------------------------------+\n";
-            cout << "| Mata Uang yang Didukung:                      |\n";
-            cout << "| - IDR (Indonesian Rupiah) - Rp                |\n";
-            cout << "| - USD (US Dollar) - $                         |\n";
-            cout << "| - MYR (Malaysian Ringgit) - RM                |\n";
-            cout << "| - JPY (Japanese Yen) - ¥                      |\n";
-            cout << "| - EUR (Euro) - €                              |\n";
-            cout << "| - GBP (British Pound) - £                     |\n";
-            cout << "| - SGD (Singapore Dollar) - S$                 |\n";
-            cout << "| - THB (Thai Baht) - ฿                         |\n";
-            cout << "| - AUD (Australian Dollar) - A$                |\n";
-            cout << "| - CNY (Chinese Yuan) - ¥                      |\n";
-            cout << "+===============================================+\n";
+            cout << "Program ini digunakan untuk mengonversi mata uang\n";
+            cout << "antar negara dengan kurs terupdate dari API.\n";
+            cout << "\nFitur Utama:\n";
+            cout << "1. Konversi mata uang\n";
+            cout << "2. Riwayat konversi\n";
+            cout << "3. Update kurs dari API\n";
+            cout << "4. Dashboard analitik\n";
+            cout << "5. Laporan detail\n";
+            cout << "\nTips:\n";
+            cout << "- Pastikan koneksi internet stabil\n";
+            cout << "- Update kurs secara berkala\n";
+            cout << "- Gunakan simbol mata uang yang benar\n";
+            cout << "\nMata Uang yang Didukung:\n";
+            
+            // Tampilkan daftar mata uang yang didukung secara dinamis
+            for (int i = 0; i < (int)currencies.size(); i++) {
+                cout << "- " << currencies[i].symbol << " (" << currencies[i].name << ") - " << currencies[i].display << "\n";
+            }
+            cout << "\n+===============================================+\n";
 
             cout << "\nTekan ENTER untuk melanjutkan...";
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -316,7 +369,7 @@ int main()
         }
 
         //==== KELUAR ====
-        else if (pilihan == 5)
+        else if (pilihan == 7)
         {
             cout << "\nTerima Kasih telah menggunakan program konversi mata uang!\n";
             cout << "Jika mengalami masalah, silakan coba:\n";
@@ -327,14 +380,44 @@ int main()
 
         else
         {
-            cout << "[ERROR] Pilihan tidak Valid. Silakan pilih 1-5.\n";
+            cout << "[ERROR] Pilihan tidak Valid. Silakan pilih 1-7.\n";
             
             cout << "\nTekan ENTER untuk melanjutkan...";
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cin.get();
         }
     }
+    
+    // Save history before exiting
+    saveHistoryToFile(riwayat);
     return 0;
+}
+
+// Fungsi untuk menyimpan riwayat ke file
+void saveHistoryToFile(const vector<string>& history) {
+    ofstream file("conversion_history.txt");
+    if (file.is_open()) {
+        for (const auto& entry : history) {
+            file << entry << endl;
+        }
+        file.close();
+    }
+}
+
+// Fungsi untuk memuat riwayat dari file
+vector<string> loadHistoryFromFile() {
+    vector<string> history;
+    ifstream file("conversion_history.txt");
+    
+    if (file.is_open()) {
+        string line;
+        while (getline(file, line)) {
+            history.push_back(line);
+        }
+        file.close();
+    }
+    
+    return history;
 }
 
 // Fungsi untuk mendapatkan tanggal saat ini
@@ -344,6 +427,23 @@ string getCurrentDate() {
     char dateStr[11];
     strftime(dateStr, sizeof(dateStr), "%Y-%m-%d", ltm);
     return string(dateStr);
+}
+
+// Fungsi untuk ekspor data analitik
+void exportAnalyticsData(AnalyticsLogger& analytics) {
+    string filename;
+    cout << "\nMasukkan nama file untuk ekspor data (contoh: analytics_export.json): ";
+    cin >> filename;
+    
+    if (filename.empty()) {
+        filename = "analytics_export_" + getCurrentDate() + ".json";
+    }
+    
+    analytics.exportAnalytics(filename);
+    
+    cout << "\nTekan ENTER untuk melanjutkan...";
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    cin.get();
 }
 
 // Fungsi untuk memeriksa apakah cache sudah expired (lebih dari 1 jam)

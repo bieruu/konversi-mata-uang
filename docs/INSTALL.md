@@ -1,5 +1,22 @@
 # Panduan Instalasi Library untuk Program Konversi Mata Uang
 
+## Cara Termudah (Satu Command!)
+### Untuk Linux (Ubuntu/Debian/CentOS/Arch):
+```bash
+./install.sh
+```
+
+### Untuk Windows:
+```cmd
+install.bat
+```
+
+**Proses Instalasi:**
+- Install package manager (jika belum)
+- Install compiler dan library
+- Compile program
+- Program siap dijalankan
+
 ## Instalasi Library yang Dibutuhkan
 
 ### 1. CPR (HTTP Library)
@@ -32,6 +49,26 @@ sudo apt install nlohmann-json3-dev
 
 # Atau untuk CentOS/RHEL
 sudo yum install nlohmann-json-devel
+```
+
+## Cara Manual
+
+### Linux:
+```bash
+# 1. Install library
+./install.sh
+
+# 2. Jalankan program
+./Project
+```
+
+### Windows:
+```cmd
+# 1. Install library (sebagai Administrator)
+install.bat
+
+# 2. Jalankan program
+Project.exe
 ```
 
 ## Compile Program
@@ -69,14 +106,14 @@ Untuk kemudahan, Anda bisa menggunakan installer yang sudah disediakan:
 install.bat
 ```
 
-**Catatan**: Setelah instalasi berhasil, installer akan secara otomatis terhapus untuk pengalaman yang lebih bersih. Untuk menjalankan program, cukup gunakan:
+**Catatan**: Setelah instalasi berhasil, program dapat langsung dijalankan:
 
 ```bash
 # Untuk Linux
-./run.sh
+./Project
 
 # Untuk Windows
-run.bat
+Project.exe
 ```
 
 ## Alternatif: Compile dengan CMake
