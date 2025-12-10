@@ -48,11 +48,13 @@ bool isCacheExpired();
 string getCurrentDate();
 string getCurrencyName(const string& symbol);
 string getDisplaySymbol(const string& symbol);
+void saveHistoryToFile(const vector<string>& history);
+vector<string> loadHistoryFromFile();
 
 int main()
 {
     vector<Currency> currencies = loadCurrencies();
-    vector<string> riwayat;
+    vector<string> riwayat = loadHistoryFromFile();  // Load previous history
     bool jalan = true;
     int pilihan;
     int mu1, mu2;
@@ -255,6 +257,9 @@ int main()
                 << currencies[mu2 - 1].display << output << " (" << currencies[mu2 - 1].name << ")";
             riwayat.push_back(oss.str());
             
+            // Save history to file after each conversion
+            saveHistoryToFile(riwayat);
+            
             // Log aktivitas konversi
             analytics.logConversion(
                 currencies[mu1 - 1].symbol,
@@ -382,7 +387,37 @@ int main()
             cin.get();
         }
     }
+    
+    // Save history before exiting
+    saveHistoryToFile(riwayat);
     return 0;
+}
+
+// Fungsi untuk menyimpan riwayat ke file
+void saveHistoryToFile(const vector<string>& history) {
+    ofstream file("conversion_history.txt");
+    if (file.is_open()) {
+        for (const auto& entry : history) {
+            file << entry << endl;
+        }
+        file.close();
+    }
+}
+
+// Fungsi untuk memuat riwayat dari file
+vector<string> loadHistoryFromFile() {
+    vector<string> history;
+    ifstream file("conversion_history.txt");
+    
+    if (file.is_open()) {
+        string line;
+        while (getline(file, line)) {
+            history.push_back(line);
+        }
+        file.close();
+    }
+    
+    return history;
 }
 
 // Fungsi untuk mendapatkan tanggal saat ini
