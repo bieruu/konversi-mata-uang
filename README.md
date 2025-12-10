@@ -177,7 +177,6 @@ struct Currency {
 - **[UNINSTALL.md](docs/UNINSTALL.md)**: Panduan uninstall
 - **[Contributing.md](docs/Contributing.md)**: Panduan kontribusi & developer
 - **[CHANGELOG.md](docs/CHANGELOG.md)**: Riwayat perubahan
-- **[FlowChart.drawio.pdf](docs/FlowChart.drawio.pdf)**: Flowchart program
 
 ## 🚀 Cara Menjalankan Program
 
