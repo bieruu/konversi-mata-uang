@@ -14,7 +14,7 @@ Program ini menyediakan fitur uninstall yang lengkap untuk membersihkan file-fil
 - **File yang tetap ada**:
   - Dokumentasi (`README.md`, `docs/`)
   - Source code (`src/`)
-  - Installer (`scripts/`, `install.sh`, `install.bat`, dll)
+  - Installer (`install.sh`, `install.bat`, dll)
 
 ### 2. Uninstall Masif
 - **Deskripsi**: Menghapus semua file termasuk cache dan dokumentasi

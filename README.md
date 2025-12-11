@@ -12,11 +12,11 @@ konversi-mata-uang/
 │   └── currency_config.json      # Konfigurasi mata uang
 ├── cache/                        # Folder cache kurs
 │   └── cache.txt                 # File cache kurs
-├── scripts/                      # Installer dan runner
-│   ├── install.sh                # Installer Linux
-│   ├── uninstall.sh              # Uninstaller Linux
-│   ├── install.bat               # Installer Windows
-│   └── uninstall.bat             # Uninstaller Windows
+├── install.sh                    # Installer Linux
+├── uninstall.sh                  # Uninstaller Linux
+├── install.bat                   # Installer Windows
+├── uninstall.bat                 # Uninstaller Windows
+├── scripts/                      # (folder scripts kosong sekarang)
 └── docs/                         # Dokumentasi dan panduan
     ├── README.md                 # Dokumentasi utama
     ├── INSTALL.md                # Panduan install manual
