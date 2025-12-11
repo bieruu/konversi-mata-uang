@@ -39,6 +39,25 @@ const vector<Currency> DEFAULT_CURRENCIES = {
     {"Korean Won", "KRW", "₩", 1350.0}
 };
 
+// Fungsi clear screen cross-platform yang lebih kuat
+void clearScreen() {
+    #ifdef _WIN32
+        // Windows: gunakan cls + cls untuk double clear
+        system("cls");
+        system("cls");
+    #else
+        // Linux: gunakan escape sequence yang kuat untuk clear screen + scrollback buffer
+        // \033[2J = clear screen
+        // \033[H = move cursor to home
+        // \033[3J = clear scrollback buffer (history)
+        // \033c = full reset terminal
+        cout << "\033[2J\033[H\033[3J\033c";
+        
+        // Kembalikan cursor ke posisi awal
+        cout << "\033[H";
+    #endif
+}
+
 // Fungsi deklarasi
 vector<Currency> loadCurrencies();
 bool updateExchangeRates(vector<Currency>& currencies);
@@ -107,6 +126,7 @@ int main()
         //==== KONVERSI ====
         if (pilihan == 1)
         {
+            clearScreen();
             cout << "\n[SISTEM] Masuk ke opsi konversi mata uang\n";
             cout << "\n+========================================+\n";
             cout << "|            DAFTAR MATA UANG            |\n";
@@ -300,6 +320,9 @@ int main()
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cin.get();
 
+            // Bersihkan layar sebelum kembali ke menu utama
+            clearScreen();
+
             // Simpan riwayat
             ostringstream oss;
             oss << fixed << setprecision(2)
@@ -323,6 +346,7 @@ int main()
         //==== RIWAYAT ====
         else if (pilihan == 2)
         {
+            clearScreen();
             cout << "\n+============== RIWAYAT KONVERSI ==============+\n";
 
             if (riwayat.empty())
@@ -345,11 +369,15 @@ int main()
             cout << "\nTekan ENTER untuk melanjutkan...";
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cin.get();
+
+            // Bersihkan layar sebelum kembali ke menu utama
+            clearScreen();
         }
 
         //==== UPDATE KURS ====
         else if (pilihan == 3)
         {
+            clearScreen();
             cout << "\n[SISTEM] Update kurs mata uang\n";
             if (updateExchangeRates(currencies)) {
                 saveCurrenciesToFile(currencies);
@@ -364,33 +392,45 @@ int main()
             cout << "\nTekan ENTER untuk melanjutkan...";
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cin.get();
+
+            // Bersihkan layar sebelum kembali ke menu utama
+            clearScreen();
         }
 
         //==== DASHBOARD ANALITIK ====
         else if (pilihan == 4)
         {
+            clearScreen();
             cout << "\n[SISTEM] Menampilkan dashboard analitik...\n";
             analytics.generateDashboard();
             
             cout << "\nTekan ENTER untuk melanjutkan...";
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cin.get();
+
+            // Bersihkan layar sebelum kembali ke menu utama
+            clearScreen();
         }
         
         //==== LAPORAN DETAIL ====
         else if (pilihan == 5)
         {
+            clearScreen();
             cout << "\n[SISTEM] Menampilkan laporan analitik detail...\n";
             analytics.generateDetailedReport();
             
             cout << "\nTekan ENTER untuk melanjutkan...";
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cin.get();
+
+            // Bersihkan layar sebelum kembali ke menu utama
+            clearScreen();
         }
 
         //==== BANTUAN ====
         else if (pilihan == 6)
         {
+            clearScreen();
             cout << "\n+===============================================+\n";
             cout << "|              BANTUAN & INFORMASI              |\n";
             cout << "+===============================================+\n";
@@ -417,6 +457,9 @@ int main()
             cout << "\nTekan ENTER untuk melanjutkan...";
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cin.get();
+
+            // Bersihkan layar sebelum kembali ke menu utama
+            clearScreen();
         }
 
         //==== KELUAR ====
@@ -431,6 +474,7 @@ int main()
 
         else
         {
+            clearScreen();
             cout << "[ERROR] Pilihan tidak Valid. Silakan pilih 1-7.\n";
             
             cout << "\nTekan ENTER untuk melanjutkan...";
