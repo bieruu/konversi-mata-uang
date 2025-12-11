@@ -52,7 +52,7 @@ if %ERRORLEVEL% EQU 0 (
     echo Program siap digunakan!
     echo.
     echo Cara menjalankan:
-    echo   ./Project
+    echo   ./Project.exe
     echo.
     echo File yang dibuat:
     echo   - Project.exe (executable)
@@ -74,7 +74,7 @@ if %ERRORLEVEL% EQU 0 (
     
     echo.
     echo ✅ Instalasi selesai! Sekarang Anda hanya perlu menjalankan:
-    echo    ./Project
+    echo    ./Project.exe
     echo.
     pause
 ) else (
