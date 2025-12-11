@@ -1,56 +1,45 @@
 # Program Konversi Mata Uang
 
-Program konversi mata uang profesional dengan fitur update kurs otomatis dari API, penyimpanan riwayat, dan sistem modular yang mudah dikembangkan.
-
-## 🎯 Versi Saat Ini
-**v2.0.0** - Cross-Platform Release
+Program konversi mata uang profesional dengan fitur penyimpanan riwayat, dan sistem modular yang mudah dikembangkan.
 
 ## 📁 Struktur Project
 ```
 konversi-mata-uang/
 ├── src/                          # Source code utama
-│   ├── Project.cpp               # Program utama (versi API)
+│   ├── Project.cpp               # Program utama
 │   ├── currency_manager.h        # Header CurrencyManager
 │   ├── currency_manager.cpp      # Implementasi CurrencyManager
 │   └── currency_config.json      # Konfigurasi mata uang
-├── scripts/                      # Installer dan runner
-│   ├── install.sh                # Installer Linux
-│   ├── run.sh                    # Runner Linux (deprecated - use ./Project instead)
-│   ├── uninstall.sh              # Uninstaller Linux
-│   ├── install.bat               # Installer Windows
-│   ├── run.bat                   # Runner Windows
-│   └── uninstall.bat             # Uninstaller Windows
+├── cache/                        # Folder cache kurs
+│   └── cache.txt                 # File cache kurs
+├── install.sh                    # Installer Linux
+├── uninstall.sh                  # Uninstaller Linux
+├── install.bat                   # Installer Windows
+├── uninstall.bat                 # Uninstaller Windows
 └── docs/                         # Dokumentasi dan panduan
     ├── README.md                 # Dokumentasi utama
     ├── INSTALL.md                # Panduan install manual
     ├── UNINSTALL.md              # Panduan uninstall
-    ├── Contributing.md           # Panduan kontribusi & developer
-    ├── CHANGELOG.md              # Riwayat perubahan
-    └── FlowChart.drawio.pdf      # Flowchart program
+    └── Contributing.md           # Panduan kontribusi & developer
 ```
 
 ## ✨ Fitur Utama
 
 - ✅ **Cross-Platform**: Support Windows dan Linux
-- ✅ **Zero Setup**: Install otomatis, tidak perlu setup manual
-- ✅ **Update Kurs Otomatis**: Mengambil kurs real-time dari API
 - ✅ **Cache Lokal**: Menyimpan kurs untuk penggunaan offline
 - ✅ **Riwayat Konversi**: Menyimpan dan menampilkan riwayat konversi
-- ✅ **Error Handling**: Penanganan error yang baik
-- ✅ **Validasi Input**: Input lebih aman dan user-friendly
-- ✅ **One-Click Execution**: Cukup satu command untuk jalankan program
 - ✅ **Modular Architecture**: Sistem modular dengan CurrencyManager
 - ✅ **JSON Configuration**: Konfigurasi mata uang terpusat di file JSON
 - ✅ **Developer Friendly**: Mudah ditambahkan mata uang baru tanpa ubah kode
-- ✅ **Easy Currency Management**: Tambah/hapus mata uang secara langsung dari program
 
 ## 🚀 Instalasi & Penggunaan
-
-### ⚡ Cara Termudah (Satu Command!)
+Pastikan program sudah di-compile terlebih dahulu menggunakan:
+- Linux: `./install.sh`
+- Windows: `install.bat`
 
 #### Untuk Linux (Ubuntu/Debian/CentOS/Arch):
 ```bash
-./Project
+./Project.out
 ```
 
 #### Untuk Windows:
@@ -58,39 +47,24 @@ konversi-mata-uang/
 Project.exe
 ```
 
-**Catatan**: Pastikan program sudah di-compile terlebih dahulu menggunakan:
-- Linux: `./install.sh`
-- Windows: `install.bat`
 
-### 🛠️ Cara Manual
+### 🎯 Menu Program
 
-#### Linux:
-```bash
-# 1. Install library dan compile
-./install.sh
+Program ini menyediakan 6 menu utama:
 
-# 2. Jalankan program
-./Project
-```
-
-#### Windows:
-```cmd
-# 1. Install library dan compile (sebagai Administrator)
-install.bat
-
-# 2. Jalankan program
-Project.exe
-```
-
-**Catatan**: Setelah instalasi berhasil, installer akan secara otomatis terhapus. Untuk menjalankan program selanjutnya, cukup gunakan `./Project` (Linux) atau `Project.exe` (Windows).
+1. **[1] Konversi Mata Uang** - Konversi antar mata uang
+2. **[2] Lihat Daftar Mata Uang** - Tampilkan semua mata uang yang tersedia
+3. **[3] Update Kurs dari API** - Update kurs secara real-time dari API
+4. **[4] Tambah Mata Uang Baru** - Tambahkan mata uang baru ke sistem
+5. **[5] Hapus Mata Uang** - Hapus mata uang dari sistem
+6. **[6] Lihat Riwayat Konversi** - Tampilkan riwayat konversi terakhir
+7. **[0] Keluar** - Keluar dari program
 
 ### 📦 Prasyarat Manual
 - **Linux**: g++ compiler, libcpr-dev, nlohmann-json3-dev
 - **Windows**: MinGW, CPR library, Nlohmann JSON
 
 ## 🗑️ Uninstall
-
-Program ini menyediakan fitur uninstall untuk membersihkan file-file yang terkait。
 
 ### Untuk Linux:
 ```bash
@@ -113,7 +87,6 @@ Program uninstall menyediakan 3 pilihan：
 3. **Uninstall Lengkap**: Menghapus program, dependencies, dan file terkait
    - **Fitur baru**: Secara otomatis mendeteksi dan menghapus dependencies yang hanya digunakan oleh program ini
    - **Keamanan**: Hanya menghapus dependencies yang aman dihapus (tidak digunakan oleh program lain)
-   - **Auto Privilege Elevation**: Script secara otomatis meminta elevasi privilege jika diperlukan
 
 ## 🏗️ Arsitektur Sistem
 
@@ -145,11 +118,8 @@ struct Currency {
 
 ### ✨ Fitur Unggulan
 - **Cross-Platform**: Support Windows dan Linux
-- **Zero Setup**: Tidak perlu install manual
-- **One-Click Execution**: Cukup satu command
 - **Auto-Update**: Kurs selalu update dari API
 - **Offline Support**: Bisa digunakan tanpa internet
-- **Professional Structure**: Struktur project rapi dan terorganisir
 - **Developer Friendly**: Sistem modular memudahkan pengembangan
 - **JSON Configuration**: Konfigurasi fleksibel tanpa ubah kode
 
@@ -157,9 +127,9 @@ struct Currency {
 - **Error Handling**: Penanganan error yang baik
 - **Input Validation**: Validasi input ketat
 - **Cache Management**: Cache lokal cerdas
-- **User Friendly**: Tampilan dan pesan informatif
 - **Modular Design**: Sistem modular dengan CurrencyManager
 - **Easy Maintenance**: Konfigurasi terpusat dan mudah dimodifikasi
+- **Cross-Platform Clear Screen**: Implementasi robust menggunakan ANSI escape sequence
 
 ## 🌍 Platform Support
 
@@ -172,27 +142,9 @@ struct Currency {
 
 ## 📚 Dokumentasi
 
-- **[README.md](docs/README.md)**: Dokumentasi utama
 - **[INSTALL.md](docs/INSTALL.md)**: Panduan install manual
 - **[UNINSTALL.md](docs/UNINSTALL.md)**: Panduan uninstall
 - **[Contributing.md](docs/Contributing.md)**: Panduan kontribusi & developer
-- **[CHANGELOG.md](docs/CHANGELOG.md)**: Riwayat perubahan
-
-## 🚀 Cara Menjalankan Program
-
-Setelah instalasi selesai, program dapat dijalankan secara langsung:
-
-### Linux
-```bash
-./Project
-```
-
-### Windows
-```cmd
-Project.exe
-```
-
-**Catatan**: Pastikan Anda telah menjalankan proses instalasi terlebih dahulu untuk mengcompile program.
 
 ## 📊 Analisis Teknis Mendalam
 
@@ -335,13 +287,6 @@ cek_package_usage() {
     return 0  # Aman untuk dihapus
 }
 ```
-
-**Uninstall Features:**
-1. **Dependency Safety**: Hanya hapus dependencies yang aman
-2. **Multi-option**: Normal, Masif, Lengkap
-3. **Auto-elevation**: Minta sudo/admin otomatis
-4. **Double Confirmation**: Konfirmasi ganda untuk operasi berbahaya
-5. **Error Logging**: Log semua error untuk debugging
 
 ### Performance & Security Considerations
 

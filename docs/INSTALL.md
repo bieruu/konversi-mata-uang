@@ -59,7 +59,7 @@ sudo yum install nlohmann-json-devel
 ./install.sh
 
 # 2. Jalankan program
-./Project
+./Project.out
 ```
 
 ### Windows:
@@ -75,14 +75,14 @@ Project.exe
 
 ### Program Standar (tanpa API)
 ```bash
-g++ -o Project Project.cpp -std=c++17
-./Project
+g++ -o Project.out Project.cpp -std=c++17
+./Project.out
 ```
 
 ### Program dengan API
 ```bash
-g++ -o Project Project.cpp -std=c++17 -lcpr -lnlohmann_json
-./Project
+g++ -o Project.out Project.cpp -std=c++17 -lcpr -lnlohmann_json
+./Project.out
 ```
 
 ### Setelah Compile
@@ -91,7 +91,7 @@ g++ -o Project Project.cpp -std=c++17 -lcpr -lnlohmann_json
 sudo ldconfig
 
 # Jalankan program
-./Project
+./Project.out
 ```
 
 ### Cara Mudah: Gunakan Installer
@@ -110,7 +110,7 @@ install.bat
 
 ```bash
 # Untuk Linux
-./Project
+./Project.out
 
 # Untuk Windows
 Project.exe
@@ -145,7 +145,7 @@ make
 sudo ldconfig
 
 # Jalankan program
-./Project
+./Project.out
 ```
 
 ## Troubleshooting
@@ -186,71 +186,3 @@ sudo ldconfig
   ```bash
   ldd Project
   ```
-
-## Fitur yang Ditambahkan
-
-1. **Update Kurs Otomatis**: Mengambil kurs real-time dari API
-2. **Cache Lokal**: Menyimpan kurs ke file untuk penggunaan offline
-3. **Error Handling**: Penanganan error koneksi dan exception
-4. **Menu Update**: Menu khusus untuk update kurs
-5. **Validasi Input**: Validasi input lebih ketat
-6. **Modular Architecture**: Sistem modular dengan CurrencyManager
-7. **JSON Configuration**: Konfigurasi mata uang terpusat di `currency_config.json`
-8. **Easy Currency Management**: Tambah/hapus mata uang secara langsung dari program
-
-## Struktur File
-
-```
-konversi-mata-uang/
-├── src/
-│   ├── Project.cpp               # Program utama (dengan API)
-│   ├── currency_manager.h        # Header CurrencyManager
-│   ├── currency_manager.cpp      # Implementasi CurrencyManager
-│   └── currency_config.json      # File config mata uang
-├── scripts/
-│   ├── install.sh                # Installer Linux
-│   ├── run.sh                    # Runner Linux
-│   ├── uninstall.sh              # Uninstaller Linux
-│   ├── install.bat               # Installer Windows
-│   ├── run.bat                   # Runner Windows
-│   └── uninstall.bat             # Uninstaller Windows
-└── docs/
-    ├── README.md                 # Dokumentasi utama
-    ├── INSTALL.md                # File ini
-    ├── UNINSTALL.md              # Panduan uninstall
-    ├── Contributing.md           # Panduan kontribusi
-    ├── CHANGELOG.md              # Riwayat perubahan
-    └── FlowChart.drawio.pdf      # Flowchart program
-```
-
-## Developer Notes
-
-### Menambahkan Mata Uang Baru
-
-Program ini menggunakan sistem modular dengan CurrencyManager yang memudahkan penambahan mata uang baru:
-
-1. **Melalui File Config** (Direkomendasikan):
-   - Buka `src/currency_config.json`
-   - Tambahkan objek baru ke array `currencies`:
-   ```json
-   {
-     "name": "Nama Mata Uang Lengkap",
-     "symbol": "KODE",
-     "display": "Simbol Tampilan",
-     "default_rate": 1.0,
-     "description": "Deskripsi mata uang"
-   }
-   ```
-
-2. **Melalui Program** (Runtime):
-   - Jalankan program
-   - Pilih menu [4] Tambah Mata Uang Baru
-   - Masukkan data mata uang
-   - Mata uang akan otomatis ditambahkan ke config file
-
-### Aturan Penamaan
-
-- **Symbol**: Gunakan standar ISO 4217 (contoh: USD, EUR, IDR, JPY)
-- **Display**: Simbol yang ditampilkan ke user (boleh menggunakan simbol khusus)
-- **Name**: Nama lengkap mata uang (format: Negara + Currency)
-- **Default Rate**: Kurs default terhadap USD (akan diupdate otomatis dari API)

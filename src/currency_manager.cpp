@@ -83,19 +83,53 @@ bool CurrencyManager::isCacheExpired() const {
         return true;
     }
     
-    string cacheDate;
-    getline(file, cacheDate);
+    string cacheTimestamp;
+    getline(file, cacheTimestamp);
     file.close();
     
-    return cacheDate != getCurrentDate();
+    // Parse timestamp cache (format: YYYY-MM-DD HH:MM:SS)
+    if (cacheTimestamp.length() < 16) {
+        return true; // Format tidak valid
+    }
+    
+    try {
+        // Ambil jam cache
+        int cacheHour = stoi(cacheTimestamp.substr(11, 2));
+        int cacheMinute = stoi(cacheTimestamp.substr(14, 2));
+        
+        // Hitung waktu sekarang
+        time_t now = time(0);
+        tm *ltm = localtime(&now);
+        
+        int currentHour = ltm->tm_hour;
+        int currentMinute = ltm->tm_min;
+        
+        // Hitung selisih waktu dalam menit
+        int cacheTimeMinutes = cacheHour * 60 + cacheMinute;
+        int currentTimeMinutes = currentHour * 60 + currentMinute;
+        
+        // Hitung selisih (dengan penanganan wrap-around harian)
+        int diffMinutes;
+        if (currentTimeMinutes >= cacheTimeMinutes) {
+            diffMinutes = currentTimeMinutes - cacheTimeMinutes;
+        } else {
+            diffMinutes = (24 * 60) - cacheTimeMinutes + currentTimeMinutes;
+        }
+        
+        // Cache expired jika lebih dari 60 menit (1 jam)
+        return diffMinutes > 60;
+        
+    } catch (const exception& e) {
+        return true; // Jika parsing gagal, anggap expired
+    }
 }
 
 string CurrencyManager::getCurrentDate() const {
     time_t now = time(0);
     tm *ltm = localtime(&now);
-    char dateStr[11];
-    strftime(dateStr, sizeof(dateStr), "%Y-%m-%d", ltm);
-    return string(dateStr);
+    char timestampStr[20];
+    strftime(timestampStr, sizeof(timestampStr), "%Y-%m-%d %H:%M:%S", ltm);
+    return string(timestampStr);
 }
 
 bool CurrencyManager::updateFromAPI() {
@@ -149,9 +183,9 @@ bool CurrencyManager::saveToCache() {
         return false;
     }
     
-    file << getCurrentDate() << endl;
+    file << getCurrentDate() << endl; // Simpan timestamp lengkap
     for (const auto& currency : currencies) {
-        file << currency.name << "," << currency.symbol << "," 
+        file << currency.name << "," << currency.symbol << ","
              << currency.display << "," << currency.rate << endl;
     }
     file.close();
@@ -189,12 +223,16 @@ bool CurrencyManager::addCurrency(const Currency& currency) {
 }
 
 bool CurrencyManager::removeCurrency(const string& symbol) {
-    auto it = remove_if(currencies.begin(), currencies.end(), 
-                        [&symbol](const Currency& c) { return c.symbol == symbol; });
+    // Gunakan erase-remove idiom untuk menghindari double free
+    auto original_size = currencies.size();
+    currencies.erase(
+        remove_if(currencies.begin(), currencies.end(),
+                 [&symbol](const Currency& c) { return c.symbol == symbol; }),
+        currencies.end()
+    );
     
-    if (it != currencies.end()) {
-        currencies.erase(it, currencies.end());
-        
+    // Cek apakah ada yang dihapus
+    if (currencies.size() < original_size) {
         // Update config file
         json config = readJSONFile(config_file);
         if (!config.is_null()) {

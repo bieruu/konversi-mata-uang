@@ -162,7 +162,7 @@ src/
 
 4. **Mata uang akan otomatis ditambahkan ke config file**
 
-### 📝 Aturan Penamaan
+### � Aturan Penamaan
 
 #### Symbol （Kode Mata Uang）
 - **Gunakan standar ISO 4217** （contoh：USD, EUR, IDR, JPY）
@@ -186,7 +186,7 @@ src/
 - Digunakan saat cache expired dan API tidak tersedia
 - Harus angka desimal （contoh：1.0, 150.0, 17000.0）
 
-### 🔄 Cara Menghapus Mata Uang
+### �🔄 Cara Menghapus Mata Uang
 
 #### Melalui Program：
 1. Jalankan program
@@ -216,24 +216,6 @@ src/
 4. **Backup file config sebelum edit**
    - Simpan salinan file config.json
    - Jika terjadi error，bisa dikembalikan
-
-### 📈 Keuntungan Sistem Baru
-
-1. **Mudah Dikembangkan**
-   - Tidak perlu ubah kode program
-   - Cukup edit file JSON
-
-2. **Flexible**
-   - Bisa tambah/hapus mata uang kapan saja
-   - Bisa atur default rate sesuai kebutuhan
-
-3. **Terstruktur**
-   - Semua konfigurasi terpusat di satu file
-   - Mudah dibaca dan dimaintenance
-
-4. **Aman**
-   - Perubahan config tidak mempengaruhi core program
-   - Bisa rollback dengan mudah
 
 ### 🎯 Best Practices
 

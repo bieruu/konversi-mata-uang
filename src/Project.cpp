@@ -15,6 +15,15 @@
 using namespace std;
 using json = nlohmann::json;
 
+// Fungsi untuk membuat folder history secara otomatis
+void createHistoryFolder() {
+    #ifdef _WIN32
+        system("mkdir history 2>nul");
+    #else
+        system("mkdir -p history");
+    #endif
+}
+
 // Struktur data mata uang
 struct Currency {
     string name;        // Nama lengkap mata uang (contoh: "Indonesian Rupiah")
@@ -39,6 +48,25 @@ const vector<Currency> DEFAULT_CURRENCIES = {
     {"Korean Won", "KRW", "₩", 1350.0}
 };
 
+// Fungsi clear screen cross-platform yang lebih kuat
+void clearScreen() {
+    #ifdef _WIN32
+        // Windows: gunakan cls + cls untuk double clear
+        system("cls");
+        system("cls");
+    #else
+        // Linux: gunakan escape sequence yang kuat untuk clear screen + scrollback buffer
+        // \033[2J = clear screen
+        // \033[H = move cursor to home
+        // \033[3J = clear scrollback buffer (history)
+        // \033c = full reset terminal
+        cout << "\033[2J\033[H\033[3J\033c";
+        
+        // Kembalikan cursor ke posisi awal
+        cout << "\033[H";
+    #endif
+}
+
 // Fungsi deklarasi
 vector<Currency> loadCurrencies();
 bool updateExchangeRates(vector<Currency>& currencies);
@@ -53,6 +81,9 @@ vector<string> loadHistoryFromFile();
 
 int main()
 {
+    // Buat folder history secara otomatis
+    createHistoryFolder();
+    
     vector<Currency> currencies = loadCurrencies();
     vector<string> riwayat = loadHistoryFromFile();  // Load previous history
     bool jalan = true;
@@ -92,7 +123,7 @@ int main()
         cout << "|  [6] Bantuan & Informasi             |\n";
         cout << "|  [7] Keluar Program                  |\n";
         cout << "+======================================+\n";
-        cout << "Pilih menu (1-5): ";
+        cout << "Pilih menu (1-7): ";
 
         cin >> pilihan;
 
@@ -107,6 +138,7 @@ int main()
         //==== KONVERSI ====
         if (pilihan == 1)
         {
+            clearScreen();
             cout << "\n[SISTEM] Masuk ke opsi konversi mata uang\n";
             cout << "\n+========================================+\n";
             cout << "|            DAFTAR MATA UANG            |\n";
@@ -204,30 +236,81 @@ int main()
             cout << "+----------------------------------------+\n";
 
             string inputStr;
+            const double MAX_AMOUNT = 1e15; // Batas maksimum 10^15
 
             while (true)
             {
                 cout << ">> ";
                 cin >> inputStr;
 
-                inputStr.erase(remove(inputStr.begin(), inputStr.end(), '.'), inputStr.end());
+                // Validasi input tidak kosong
+                if (inputStr.empty()) {
+                    cout << "\n[!] Input tidak boleh kosong. Coba lagi.\n";
+                    continue;
+                }
+
+                // Hapus titik desimal untuk validasi
+                string cleanInput = inputStr;
+                cleanInput.erase(remove(cleanInput.begin(), cleanInput.end(), '.'), cleanInput.end());
+
+                // Validasi format angka (hanya boleh mengandung digit, titik, dan minus)
+                bool validFormat = true;
+                bool hasDecimalPoint = false;
+                bool hasMinus = false;
+                
+                for (char c : inputStr) {
+                    if (c == '.') {
+                        if (hasDecimalPoint) {
+                            validFormat = false;
+                            break;
+                        }
+                        hasDecimalPoint = true;
+                    } else if (c == '-') {
+                        if (hasMinus || inputStr.find('-') != 0) {
+                            validFormat = false;
+                            break;
+                        }
+                        hasMinus = true;
+                    } else if (!isdigit(c)) {
+                        validFormat = false;
+                        break;
+                    }
+                }
+
+                if (!validFormat) {
+                    cout << "\n[!] Format input tidak valid. Gunakan angka (contoh: 1000.50). Coba lagi.\n";
+                    continue;
+                }
 
                 try
                 {
                     input = stod(inputStr);
 
-                    if (input < 0)
-                    {
-                        cout << "\n[!] Jumlah tidak valid. Coba lagi.\n";
+                    // Validasi range nilai
+                    if (input < 0) {
+                        cout << "\n[!] Jumlah tidak boleh negatif. Coba lagi.\n";
+                        continue;
                     }
-                    else
-                    {
-                        break;
+                    
+                    if (input > MAX_AMOUNT) {
+                        cout << "\n[!] Jumlah terlalu besar. Maksimum: " << fixed << setprecision(0) << MAX_AMOUNT << ". Coba lagi.\n";
+                        continue;
                     }
+                    
+                    if (isnan(input) || isinf(input)) {
+                        cout << "\n[!] Nilai tidak valid. Coba lagi.\n";
+                        continue;
+                    }
+
+                    break;
                 }
-                catch (...)
+                catch (const invalid_argument& e)
                 {
                     cout << "\n[!] Input harus berupa angka. Coba lagi.\n";
+                }
+                catch (const out_of_range& e)
+                {
+                    cout << "\n[!] Nilai terlalu besar. Maksimum: " << fixed << setprecision(0) << MAX_AMOUNT << ". Coba lagi.\n";
                 }
             }
 
@@ -248,6 +331,9 @@ int main()
             cout << "\nTekan ENTER untuk melanjutkan...";
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cin.get();
+
+            // Bersihkan layar sebelum kembali ke menu utama
+            clearScreen();
 
             // Simpan riwayat
             ostringstream oss;
@@ -272,6 +358,7 @@ int main()
         //==== RIWAYAT ====
         else if (pilihan == 2)
         {
+            clearScreen();
             cout << "\n+============== RIWAYAT KONVERSI ==============+\n";
 
             if (riwayat.empty())
@@ -294,11 +381,15 @@ int main()
             cout << "\nTekan ENTER untuk melanjutkan...";
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cin.get();
+
+            // Bersihkan layar sebelum kembali ke menu utama
+            clearScreen();
         }
 
         //==== UPDATE KURS ====
         else if (pilihan == 3)
         {
+            clearScreen();
             cout << "\n[SISTEM] Update kurs mata uang\n";
             if (updateExchangeRates(currencies)) {
                 saveCurrenciesToFile(currencies);
@@ -313,33 +404,45 @@ int main()
             cout << "\nTekan ENTER untuk melanjutkan...";
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cin.get();
+
+            // Bersihkan layar sebelum kembali ke menu utama
+            clearScreen();
         }
 
         //==== DASHBOARD ANALITIK ====
         else if (pilihan == 4)
         {
+            clearScreen();
             cout << "\n[SISTEM] Menampilkan dashboard analitik...\n";
             analytics.generateDashboard();
             
             cout << "\nTekan ENTER untuk melanjutkan...";
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cin.get();
+
+            // Bersihkan layar sebelum kembali ke menu utama
+            clearScreen();
         }
         
         //==== LAPORAN DETAIL ====
         else if (pilihan == 5)
         {
+            clearScreen();
             cout << "\n[SISTEM] Menampilkan laporan analitik detail...\n";
             analytics.generateDetailedReport();
             
             cout << "\nTekan ENTER untuk melanjutkan...";
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cin.get();
+
+            // Bersihkan layar sebelum kembali ke menu utama
+            clearScreen();
         }
 
         //==== BANTUAN ====
         else if (pilihan == 6)
         {
+            clearScreen();
             cout << "\n+===============================================+\n";
             cout << "|              BANTUAN & INFORMASI              |\n";
             cout << "+===============================================+\n";
@@ -366,6 +469,9 @@ int main()
             cout << "\nTekan ENTER untuk melanjutkan...";
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cin.get();
+
+            // Bersihkan layar sebelum kembali ke menu utama
+            clearScreen();
         }
 
         //==== KELUAR ====
@@ -380,6 +486,7 @@ int main()
 
         else
         {
+            clearScreen();
             cout << "[ERROR] Pilihan tidak Valid. Silakan pilih 1-7.\n";
             
             cout << "\nTekan ENTER untuk melanjutkan...";
@@ -395,7 +502,7 @@ int main()
 
 // Fungsi untuk menyimpan riwayat ke file
 void saveHistoryToFile(const vector<string>& history) {
-    ofstream file("conversion_history.txt");
+    ofstream file("history/conversion_history.txt");
     if (file.is_open()) {
         for (const auto& entry : history) {
             file << entry << endl;
@@ -407,7 +514,7 @@ void saveHistoryToFile(const vector<string>& history) {
 // Fungsi untuk memuat riwayat dari file
 vector<string> loadHistoryFromFile() {
     vector<string> history;
-    ifstream file("conversion_history.txt");
+    ifstream file("history/conversion_history.txt");
     
     if (file.is_open()) {
         string line;
@@ -424,9 +531,9 @@ vector<string> loadHistoryFromFile() {
 string getCurrentDate() {
     time_t now = time(0);
     tm *ltm = localtime(&now);
-    char dateStr[11];
-    strftime(dateStr, sizeof(dateStr), "%Y-%m-%d", ltm);
-    return string(dateStr);
+    char timestampStr[20];
+    strftime(timestampStr, sizeof(timestampStr), "%Y-%m-%d %H:%M:%S", ltm);
+    return string(timestampStr);
 }
 
 // Fungsi untuk ekspor data analitik
@@ -448,23 +555,57 @@ void exportAnalyticsData(AnalyticsLogger& analytics) {
 
 // Fungsi untuk memeriksa apakah cache sudah expired (lebih dari 1 jam)
 bool isCacheExpired() {
-    ifstream file("currency_cache.txt");
+    ifstream file("cache/cache.txt");
     if (!file.is_open()) {
         return true;
     }
     
-    string cacheDate;
-    getline(file, cacheDate);
+    string cacheTimestamp;
+    getline(file, cacheTimestamp);
     file.close();
     
-    return cacheDate != getCurrentDate();
+    // Parse timestamp cache (format: YYYY-MM-DD HH:MM:SS)
+    if (cacheTimestamp.length() < 16) {
+        return true; // Format tidak valid
+    }
+    
+    try {
+        // Ambil jam cache
+        int cacheHour = stoi(cacheTimestamp.substr(11, 2));
+        int cacheMinute = stoi(cacheTimestamp.substr(14, 2));
+        
+        // Hitung waktu sekarang
+        time_t now = time(0);
+        tm *ltm = localtime(&now);
+        
+        int currentHour = ltm->tm_hour;
+        int currentMinute = ltm->tm_min;
+        
+        // Hitung selisih waktu dalam menit
+        int cacheTimeMinutes = cacheHour * 60 + cacheMinute;
+        int currentTimeMinutes = currentHour * 60 + currentMinute;
+        
+        // Hitung selisih (dengan penanganan wrap-around harian)
+        int diffMinutes;
+        if (currentTimeMinutes >= cacheTimeMinutes) {
+            diffMinutes = currentTimeMinutes - cacheTimeMinutes;
+        } else {
+            diffMinutes = (24 * 60) - cacheTimeMinutes + currentTimeMinutes;
+        }
+        
+        // Cache expired jika lebih dari 60 menit (1 jam)
+        return diffMinutes > 60;
+        
+    } catch (const exception& e) {
+        return true; // Jika parsing gagal, anggap expired
+    }
 }
 
 // Fungsi untuk menyimpan data mata uang ke file
 void saveCurrenciesToFile(const vector<Currency>& currencies) {
-    ofstream file("currency_cache.txt");
+    ofstream file("cache/cache.txt");
     if (file.is_open()) {
-        file << getCurrentDate() << endl;
+        file << getCurrentDate() << endl; // Simpan timestamp lengkap
         for (const auto& currency : currencies) {
             file << currency.name << "," << currency.symbol << "," << currency.display << "," << currency.rate << endl;
         }
@@ -475,11 +616,11 @@ void saveCurrenciesToFile(const vector<Currency>& currencies) {
 // Fungsi untuk memuat data mata uang dari file
 vector<Currency> loadCurrenciesFromFile() {
     vector<Currency> currencies;
-    ifstream file("currency_cache.txt");
+    ifstream file("cache/cache.txt");
     
     if (file.is_open()) {
-        string date;
-        getline(file, date); // Baca tanggal cache
+        string timestamp;
+        getline(file, timestamp); // Baca timestamp cache
         
         string line;
         while (getline(file, line)) {
