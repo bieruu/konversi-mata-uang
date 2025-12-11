@@ -16,7 +16,6 @@ konversi-mata-uang/
 ├── uninstall.sh                  # Uninstaller Linux
 ├── install.bat                   # Installer Windows
 ├── uninstall.bat                 # Uninstaller Windows
-├── scripts/                      # (folder scripts kosong sekarang)
 └── docs/                         # Dokumentasi dan panduan
     ├── README.md                 # Dokumentasi utama
     ├── INSTALL.md                # Panduan install manual
