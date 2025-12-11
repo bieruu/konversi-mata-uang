@@ -121,12 +121,12 @@ fi
 echo "[INFO] Mencoba compile dengan library yang tersedia..."
 
 # Compile dengan semua source files
-g++ -o Project "$PROJECT_CPP" src/analytics_logger.cpp -std=c++17 -lcpr
+g++ -o Project.out "$PROJECT_CPP" src/analytics_logger.cpp -std=c++17 -lcpr
 
 # Jika compile gagal, coba tanpa analytics_logger
 if [ $? -ne 0 ]; then
     echo "[WARNING] Compile dengan analytics_logger gagal, mencoba tanpa analytics..."
-    g++ -o Project "$PROJECT_CPP" -std=c++17 -lcpr
+    g++ -o Project.out "$PROJECT_CPP" -std=c++17 -lcpr
 fi
 
 if [ $? -eq 0 ]; then

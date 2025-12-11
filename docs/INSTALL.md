@@ -75,14 +75,14 @@ Project.exe
 
 ### Program Standar (tanpa API)
 ```bash
-g++ -o Project Project.cpp -std=c++17
-./Project
+g++ -o Project.out Project.cpp -std=c++17
+./Project.out
 ```
 
 ### Program dengan API
 ```bash
-g++ -o Project Project.cpp -std=c++17 -lcpr -lnlohmann_json
-./Project
+g++ -o Project.out Project.cpp -std=c++17 -lcpr -lnlohmann_json
+./Project.out
 ```
 
 ### Setelah Compile
@@ -110,7 +110,7 @@ install.bat
 
 ```bash
 # Untuk Linux
-./Project
+./Project.out
 
 # Untuk Windows
 Project.exe

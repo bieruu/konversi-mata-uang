@@ -220,7 +220,7 @@ hapus_dir() {
 }
 
 # Cek apakah program sedang berjalan
-if pgrep -f "Project" > /dev/null; then
+if pgrep -f "Project.out" > /dev/null; then
     echo "[⚠️ ] Peringatan: Program sedang berjalan!"
     echo "[INFO] Untuk hasil terbaik, sebaiknya hentikan program terlebih dahulu:"
     echo "  pkill -f 'Project'"
@@ -234,8 +234,8 @@ FILES_TO_REMOVE=()
 DIRS_TO_REMOVE=()
 
 # File executable
-if cek_file "./Project"; then
-    FILES_TO_REMOVE+=("./Project")
+if cek_file "./Project.out"; then
+    FILES_TO_REMOVE+=("./Project.out")
 fi
 
 # Cache kurs
@@ -312,7 +312,7 @@ case $PILIHAN in
         echo "[INFO] Hanya menghapus program dan cache..."
         
         # Hapus file utama
-        hapus_file "./Project"
+        hapus_file "./Project.out"
         hapus_file "./currency_cache.txt"
         
         echo ""
