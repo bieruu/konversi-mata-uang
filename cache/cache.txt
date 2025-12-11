@@ -1,0 +1,12 @@
+2025-12-11 11:28:32
+Indonesian Rupiah,IDR,Rp,16676.3
+US Dollar,USD,$,1
+Malaysian Ringgit,MYR,RM,4.12
+Japanese Yen,JPY,¥,156.19
+Euro,EUR,€,0.857
+British Pound,GBP,£,0.749
+Singapore Dollar,SGD,S$,1.29
+Thai Baht,THB,฿,31.82
+Australian Dollar,AUD,A$,1.5
+Chinese Yuan,CNY,¥,7.07
+Korean Won,KRW,₩,1467.89

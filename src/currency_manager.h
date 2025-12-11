@@ -24,8 +24,8 @@ private:
     string cache_file;
 
 public:
-    CurrencyManager(const string& config_path = "src/currency_config.json", 
-                   const string& cache_path = "currency_cache.txt");
+    CurrencyManager(const string& config_path = "src/currency_config.json",
+                   const string& cache_path = "cache/cache.txt");
     
     // Load currencies dari config atau cache
     bool loadCurrencies();

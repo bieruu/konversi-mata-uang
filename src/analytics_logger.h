@@ -42,7 +42,7 @@ private:
     void updateAnalytics(const ActivityLog& log);
     
 public:
-    AnalyticsLogger(const string& log_path = "analytics_log.txt");
+    AnalyticsLogger(const string& log_path = "history/analytics_log.txt");
     ~AnalyticsLogger();
     
     // Logging functions

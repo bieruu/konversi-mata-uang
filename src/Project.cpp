@@ -15,6 +15,15 @@
 using namespace std;
 using json = nlohmann::json;
 
+// Fungsi untuk membuat folder history secara otomatis
+void createHistoryFolder() {
+    #ifdef _WIN32
+        system("mkdir history 2>nul");
+    #else
+        system("mkdir -p history");
+    #endif
+}
+
 // Struktur data mata uang
 struct Currency {
     string name;        // Nama lengkap mata uang (contoh: "Indonesian Rupiah")
@@ -72,6 +81,9 @@ vector<string> loadHistoryFromFile();
 
 int main()
 {
+    // Buat folder history secara otomatis
+    createHistoryFolder();
+    
     vector<Currency> currencies = loadCurrencies();
     vector<string> riwayat = loadHistoryFromFile();  // Load previous history
     bool jalan = true;
@@ -111,7 +123,7 @@ int main()
         cout << "|  [6] Bantuan & Informasi             |\n";
         cout << "|  [7] Keluar Program                  |\n";
         cout << "+======================================+\n";
-        cout << "Pilih menu (1-5): ";
+        cout << "Pilih menu (1-7): ";
 
         cin >> pilihan;
 
@@ -490,7 +502,7 @@ int main()
 
 // Fungsi untuk menyimpan riwayat ke file
 void saveHistoryToFile(const vector<string>& history) {
-    ofstream file("conversion_history.txt");
+    ofstream file("history/conversion_history.txt");
     if (file.is_open()) {
         for (const auto& entry : history) {
             file << entry << endl;
@@ -502,7 +514,7 @@ void saveHistoryToFile(const vector<string>& history) {
 // Fungsi untuk memuat riwayat dari file
 vector<string> loadHistoryFromFile() {
     vector<string> history;
-    ifstream file("conversion_history.txt");
+    ifstream file("history/conversion_history.txt");
     
     if (file.is_open()) {
         string line;
@@ -543,7 +555,7 @@ void exportAnalyticsData(AnalyticsLogger& analytics) {
 
 // Fungsi untuk memeriksa apakah cache sudah expired (lebih dari 1 jam)
 bool isCacheExpired() {
-    ifstream file("currency_cache.txt");
+    ifstream file("cache/cache.txt");
     if (!file.is_open()) {
         return true;
     }
@@ -591,7 +603,7 @@ bool isCacheExpired() {
 
 // Fungsi untuk menyimpan data mata uang ke file
 void saveCurrenciesToFile(const vector<Currency>& currencies) {
-    ofstream file("currency_cache.txt");
+    ofstream file("cache/cache.txt");
     if (file.is_open()) {
         file << getCurrentDate() << endl; // Simpan timestamp lengkap
         for (const auto& currency : currencies) {
@@ -604,7 +616,7 @@ void saveCurrenciesToFile(const vector<Currency>& currencies) {
 // Fungsi untuk memuat data mata uang dari file
 vector<Currency> loadCurrenciesFromFile() {
     vector<Currency> currencies;
-    ifstream file("currency_cache.txt");
+    ifstream file("cache/cache.txt");
     
     if (file.is_open()) {
         string timestamp;

@@ -9,8 +9,8 @@ Program ini menyediakan fitur uninstall yang lengkap untuk membersihkan file-fil
 ### 1. Uninstall Normal
 - **Deskripsi**: Hanya menghapus program dan cache
 - **File yang dihapus**:
-  - `Project` (executable Linux) atau `Project.exe` (Windows)
-  - `currency_cache.txt` (file cache kurs)
+  - `Project.out` (executable Linux) atau `Project.exe` (Windows)
+  - `cache/cache.txt` (file cache kurs)
 - **File yang tetap ada**:
   - Dokumentasi (`README.md`, `docs/`)
   - Source code (`src/`)
@@ -107,8 +107,8 @@ Pilih opsi (1/2/3/4):
 [INFO] Mendeteksi file-file yang terkait...
 
 [📋] File yang akan dihapus:
-  - Project
-  - currency_cache.txt
+  - Project.out
+  - cache/cache.txt
   - install.sh
   - run.sh
   - uninstall.sh
