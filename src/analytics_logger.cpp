@@ -2,6 +2,7 @@
 #include <fstream>
 #include <algorithm>
 #include <numeric>
+#include <cmath>
 
 AnalyticsLogger::AnalyticsLogger(const string& log_path) : log_file(log_path) {
     loadLogs();
@@ -26,6 +27,9 @@ bool AnalyticsLogger::loadLogs() {
     }
     
     string line;
+    int validLogs = 0;
+    int invalidLogs = 0;
+    
     while (getline(file, line)) {
         if (line.empty()) continue;
         
@@ -33,42 +37,119 @@ bool AnalyticsLogger::loadLogs() {
         stringstream ss(line);
         string temp;
         
-        // Parse log format: timestamp|type|details|amount|from|to
-        getline(ss, log.timestamp, '|');
-        getline(ss, log.activity_type, '|');
-        getline(ss, log.details, '|');
-        getline(ss, temp, '|');
-        log.amount = stod(temp);
-        getline(ss, log.from_currency, '|');
-        getline(ss, log.to_currency, '|');
-        
-        logs.push_back(log);
-        updateAnalytics(log);
+        try {
+            // Parse log format: timestamp|type|details|amount|from|to
+            if (!getline(ss, log.timestamp, '|')) {
+                invalidLogs++;
+                continue;
+            }
+            
+            if (!getline(ss, log.activity_type, '|')) {
+                invalidLogs++;
+                continue;
+            }
+            
+            if (!getline(ss, log.details, '|')) {
+                invalidLogs++;
+                continue;
+            }
+            
+            if (!getline(ss, temp, '|')) {
+                invalidLogs++;
+                continue;
+            }
+            
+            // Validasi dan parse amount
+            try {
+                log.amount = stod(temp);
+                if (isnan(log.amount) || isinf(log.amount)) {
+                    invalidLogs++;
+                    continue;
+                }
+            } catch (const invalid_argument& e) {
+                invalidLogs++;
+                continue;
+            } catch (const out_of_range& e) {
+                invalidLogs++;
+                continue;
+            }
+            
+            if (!getline(ss, log.from_currency, '|')) {
+                invalidLogs++;
+                continue;
+            }
+            
+            if (!getline(ss, log.to_currency, '|')) {
+                invalidLogs++;
+                continue;
+            }
+            
+            // Validasi minimal data
+            if (log.timestamp.empty() || log.activity_type.empty()) {
+                invalidLogs++;
+                continue;
+            }
+            
+            logs.push_back(log);
+            updateAnalytics(log);
+            validLogs++;
+            
+        } catch (const exception& e) {
+            invalidLogs++;
+            continue;
+        }
     }
     
     file.close();
-    return true;
+    
+    // Tampilkan statistik loading
+    if (invalidLogs > 0) {
+        cout << "[WARNING] " << invalidLogs << " log entries gagal diparsing, "
+             << validLogs << " berhasil.\n";
+    }
+    
+    return validLogs > 0;
 }
 
 void AnalyticsLogger::saveLogToFile(const ActivityLog& log) {
     ofstream file(log_file, ios::app);
     if (file.is_open()) {
+        // Validasi data sebelum disimpan
+        if (log.timestamp.empty() || log.activity_type.empty()) {
+            cout << "[ERROR] Gagal menyimpan log: data tidak valid\n";
+            file.close();
+            return;
+        }
+        
         file << log.timestamp << "|"
              << log.activity_type << "|"
              << log.details << "|"
-             << log.amount << "|"
+             << fixed << setprecision(2) << log.amount << "|"
              << log.from_currency << "|"
              << log.to_currency << endl;
         file.close();
+    } else {
+        cout << "[ERROR] Gagal membuka file log untuk penulisan\n";
     }
 }
 
 void AnalyticsLogger::updateAnalytics(const ActivityLog& log) {
+    // Validasi log sebelum update analytics
+    if (log.activity_type.empty()) {
+        return;
+    }
+    
     if (log.activity_type == "conversion") {
         total_conversions++;
-        currency_usage[log.from_currency]++;
-        currency_usage[log.to_currency]++;
-        currency_amounts[log.from_currency] += log.amount;
+        if (!log.from_currency.empty()) {
+            currency_usage[log.from_currency]++;
+        }
+        if (!log.to_currency.empty()) {
+            currency_usage[log.to_currency]++;
+        }
+        if (!log.from_currency.empty() && !isnan(log.amount) && !isinf(log.amount)) {
+            currency_amounts[log.from_currency] += log.amount;
+        }
     } else if (log.activity_type == "api_update") {
         total_api_updates++;
     } else if (log.activity_type == "view_history") {
@@ -76,11 +157,24 @@ void AnalyticsLogger::updateAnalytics(const ActivityLog& log) {
     }
     
     // Update daily activity
-    string date = log.timestamp.substr(0, 10);
-    daily_activity[date]++;
+    if (log.timestamp.length() >= 10) {
+        string date = log.timestamp.substr(0, 10);
+        daily_activity[date]++;
+    }
 }
 
 void AnalyticsLogger::logConversion(const string& from_currency, const string& to_currency, double amount, const string& result) {
+    // Validasi input
+    if (from_currency.empty() || to_currency.empty()) {
+        cout << "[ERROR] Gagal logging konversi: mata uang tidak valid\n";
+        return;
+    }
+    
+    if (isnan(amount) || isinf(amount) || amount < 0) {
+        cout << "[ERROR] Gagal logging konversi: jumlah tidak valid\n";
+        return;
+    }
+    
     ActivityLog log;
     log.timestamp = getCurrentTimestamp();
     log.activity_type = "conversion";

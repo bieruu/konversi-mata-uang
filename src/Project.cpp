@@ -204,30 +204,81 @@ int main()
             cout << "+----------------------------------------+\n";
 
             string inputStr;
+            const double MAX_AMOUNT = 1e15; // Batas maksimum 10^15
 
             while (true)
             {
                 cout << ">> ";
                 cin >> inputStr;
 
-                inputStr.erase(remove(inputStr.begin(), inputStr.end(), '.'), inputStr.end());
+                // Validasi input tidak kosong
+                if (inputStr.empty()) {
+                    cout << "\n[!] Input tidak boleh kosong. Coba lagi.\n";
+                    continue;
+                }
+
+                // Hapus titik desimal untuk validasi
+                string cleanInput = inputStr;
+                cleanInput.erase(remove(cleanInput.begin(), cleanInput.end(), '.'), cleanInput.end());
+
+                // Validasi format angka (hanya boleh mengandung digit, titik, dan minus)
+                bool validFormat = true;
+                bool hasDecimalPoint = false;
+                bool hasMinus = false;
+                
+                for (char c : inputStr) {
+                    if (c == '.') {
+                        if (hasDecimalPoint) {
+                            validFormat = false;
+                            break;
+                        }
+                        hasDecimalPoint = true;
+                    } else if (c == '-') {
+                        if (hasMinus || inputStr.find('-') != 0) {
+                            validFormat = false;
+                            break;
+                        }
+                        hasMinus = true;
+                    } else if (!isdigit(c)) {
+                        validFormat = false;
+                        break;
+                    }
+                }
+
+                if (!validFormat) {
+                    cout << "\n[!] Format input tidak valid. Gunakan angka (contoh: 1000.50). Coba lagi.\n";
+                    continue;
+                }
 
                 try
                 {
                     input = stod(inputStr);
 
-                    if (input < 0)
-                    {
-                        cout << "\n[!] Jumlah tidak valid. Coba lagi.\n";
+                    // Validasi range nilai
+                    if (input < 0) {
+                        cout << "\n[!] Jumlah tidak boleh negatif. Coba lagi.\n";
+                        continue;
                     }
-                    else
-                    {
-                        break;
+                    
+                    if (input > MAX_AMOUNT) {
+                        cout << "\n[!] Jumlah terlalu besar. Maksimum: " << fixed << setprecision(0) << MAX_AMOUNT << ". Coba lagi.\n";
+                        continue;
                     }
+                    
+                    if (isnan(input) || isinf(input)) {
+                        cout << "\n[!] Nilai tidak valid. Coba lagi.\n";
+                        continue;
+                    }
+
+                    break;
                 }
-                catch (...)
+                catch (const invalid_argument& e)
                 {
                     cout << "\n[!] Input harus berupa angka. Coba lagi.\n";
+                }
+                catch (const out_of_range& e)
+                {
+                    cout << "\n[!] Nilai terlalu besar. Maksimum: " << fixed << setprecision(0) << MAX_AMOUNT << ". Coba lagi.\n";
                 }
             }
 
@@ -424,9 +475,9 @@ vector<string> loadHistoryFromFile() {
 string getCurrentDate() {
     time_t now = time(0);
     tm *ltm = localtime(&now);
-    char dateStr[11];
-    strftime(dateStr, sizeof(dateStr), "%Y-%m-%d", ltm);
-    return string(dateStr);
+    char timestampStr[20];
+    strftime(timestampStr, sizeof(timestampStr), "%Y-%m-%d %H:%M:%S", ltm);
+    return string(timestampStr);
 }
 
 // Fungsi untuk ekspor data analitik
@@ -453,18 +504,52 @@ bool isCacheExpired() {
         return true;
     }
     
-    string cacheDate;
-    getline(file, cacheDate);
+    string cacheTimestamp;
+    getline(file, cacheTimestamp);
     file.close();
     
-    return cacheDate != getCurrentDate();
+    // Parse timestamp cache (format: YYYY-MM-DD HH:MM:SS)
+    if (cacheTimestamp.length() < 16) {
+        return true; // Format tidak valid
+    }
+    
+    try {
+        // Ambil jam cache
+        int cacheHour = stoi(cacheTimestamp.substr(11, 2));
+        int cacheMinute = stoi(cacheTimestamp.substr(14, 2));
+        
+        // Hitung waktu sekarang
+        time_t now = time(0);
+        tm *ltm = localtime(&now);
+        
+        int currentHour = ltm->tm_hour;
+        int currentMinute = ltm->tm_min;
+        
+        // Hitung selisih waktu dalam menit
+        int cacheTimeMinutes = cacheHour * 60 + cacheMinute;
+        int currentTimeMinutes = currentHour * 60 + currentMinute;
+        
+        // Hitung selisih (dengan penanganan wrap-around harian)
+        int diffMinutes;
+        if (currentTimeMinutes >= cacheTimeMinutes) {
+            diffMinutes = currentTimeMinutes - cacheTimeMinutes;
+        } else {
+            diffMinutes = (24 * 60) - cacheTimeMinutes + currentTimeMinutes;
+        }
+        
+        // Cache expired jika lebih dari 60 menit (1 jam)
+        return diffMinutes > 60;
+        
+    } catch (const exception& e) {
+        return true; // Jika parsing gagal, anggap expired
+    }
 }
 
 // Fungsi untuk menyimpan data mata uang ke file
 void saveCurrenciesToFile(const vector<Currency>& currencies) {
     ofstream file("currency_cache.txt");
     if (file.is_open()) {
-        file << getCurrentDate() << endl;
+        file << getCurrentDate() << endl; // Simpan timestamp lengkap
         for (const auto& currency : currencies) {
             file << currency.name << "," << currency.symbol << "," << currency.display << "," << currency.rate << endl;
         }
@@ -478,8 +563,8 @@ vector<Currency> loadCurrenciesFromFile() {
     ifstream file("currency_cache.txt");
     
     if (file.is_open()) {
-        string date;
-        getline(file, date); // Baca tanggal cache
+        string timestamp;
+        getline(file, timestamp); // Baca timestamp cache
         
         string line;
         while (getline(file, line)) {
