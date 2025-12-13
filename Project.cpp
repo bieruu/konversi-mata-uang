@@ -145,19 +145,22 @@ int getPilihanMataUang(const vector<string_view>& uang, const vector<string>& sy
         try
         {
             int pilihan = stoi(inputStr);
-            
-            // Selalu tampilkan "anda memilih" terlebih dahulu
-            clearscreen();
-            cout << "[✓] Anda memilih " << uang[pilihan - 1] << " (" << symbol[pilihan - 1] << ")\n";
-            
+
+            // Periksa apakah pilihan valid sebelum mengakses array
             if (pilihan >= 1 && pilihan <= (int)uang.size())
             {
+                // Selalu tampilkan "anda memilih" terlebih dahulu
+                clearscreen();
+                cout << "[✓] Anda memilih " << uang[pilihan - 1] << " (" << symbol[pilihan - 1] << ")\n";
                 return pilihan;
             }
             else
             {
+                // Pilihan tidak valid, tampilkan error
                 clearscreen();
-                cout << "[✓] Anda memilih " << uang[pilihan - 1] << " (" << symbol[pilihan - 1] << ")\n";
+                if (!selectedCurrency.empty()) {
+                    cout << "[✓] Anda memilih " << selectedCurrency << " (" << selectedSymbol << ")\n";
+                }
                 tampilkanError("Pilihan tidak ada. Coba lagi.", ""); // Jangan tampilkan header
                 // Jangan lanjutkan loop, biarkan user melihat error dan mencoba lagi
             }
@@ -204,6 +207,7 @@ double getJumlahInput(const string& dariMataUang, const string& dariSymbol,
         // Validasi input menggunakan fungsi kustom
         if (!isValidNumber(inputStr))
         {
+            clearscreen();
             tampilkanError("Input harus berupa angka (contoh: 1000, 100.50) atau 'exit'.");
             continue;
         }
@@ -419,6 +423,7 @@ int main()
 
         else
         {
+            clearscreen();
             tampilkanError("Pilihan tidak valid. Harap masukkan angka (1-3).");
         }
     }
