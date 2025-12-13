@@ -6,7 +6,6 @@
 #include <string_view>
 #include <sstream>
 #include <limits>
-#include <algorithm>
 #include <cstdlib>
 
 using namespace std;
@@ -107,6 +106,21 @@ string formatCurrency(double amount)
     return oss.str();
 }
 
+// Helper function to get user input with exit handling
+string getUserInput(bool& exitRequested)
+{
+    string inputStr;
+    getline(cin >> ws, inputStr);
+
+    // Cek jika user mengetik 'exit'
+    if (inputStr == "exit" || inputStr == "EXIT")
+    {
+        exitRequested = true;
+    }
+
+    return inputStr;
+}
+
 // Fungsi untuk mendapatkan pilihan mata uang dari user
 int getPilihanMataUang(const vector<string_view>& uang, const vector<string>& symbol,
                        const string& judul, const string& header, bool& exitRequested,
@@ -130,13 +144,10 @@ int getPilihanMataUang(const vector<string_view>& uang, const vector<string>& sy
         cout << "+----------------------------------------+\n";
         
         cout << ">> ";
-        string inputStr;
-        cin >> inputStr;
-        
-        // Cek jika user mengetik 'exit'
-        if (inputStr == "exit" || inputStr == "EXIT")
+        string inputStr = getUserInput(exitRequested);
+
+        if (exitRequested)
         {
-            exitRequested = true;
             clearscreen();
             return -1;
         }
@@ -193,13 +204,10 @@ double getJumlahInput(const string& dariMataUang, const string& dariSymbol,
         cout << "+----------------------------------------+\n";
         
         cout << ">> ";
-        string inputStr;
-        cin >> inputStr;
-        
-        // Cek jika user mengetik 'exit'
-        if (inputStr == "exit" || inputStr == "EXIT")
+        string inputStr = getUserInput(exitRequested);
+
+        if (exitRequested)
         {
-            exitRequested = true;
             clearscreen();
             return -1;
         }
@@ -211,10 +219,7 @@ double getJumlahInput(const string& dariMataUang, const string& dariSymbol,
             tampilkanError("Input harus berupa angka (contoh: 1000, 100.50) atau 'exit'.");
             continue;
         }
-        
-        // Hapus titik pemisah ribuan
-        inputStr.erase(remove(inputStr.begin(), inputStr.end(), '.'), inputStr.end());
-        
+
         try
         {
             double jumlah = stod(inputStr);
@@ -225,6 +230,7 @@ double getJumlahInput(const string& dariMataUang, const string& dariSymbol,
             }
             else if (jumlah == 0)
             {
+                clearscreen();
                 tampilkanError("Jumlah tidak boleh nol. Coba lagi.");
             }
             else
@@ -305,20 +311,15 @@ int main()
             // Periksa apakah mata uang sama
             while (mu2 == mu1)
             {
-                cout << "[DEBUG] Mata uang sama terdeteksi: mu1=" << mu1 << ", mu2=" << mu2 << endl;
                 tampilkanError("Tidak dapat mengonversi mata uang yang sama!",
                               "[SISTEM] Konversi dari: " + string(uang[mu1 - 1]) + " (" + symbol[mu1 - 1] + ")");
 
-                cout << "[DEBUG] Memanggil getPilihanMataUang untuk mata uang tujuan..." << endl;
                 mu2 = getPilihanMataUang(uang, symbol, "Masukkan nomor mata uang tujuan",
                                        "[SISTEM] Konversi dari: " + string(uang[mu1 - 1]) + " (" + symbol[mu1 - 1] + ")", exitRequested,
                                        string(uang[mu1 - 1]), symbol[mu1 - 1]);
-                
-                cout << "[DEBUG] Setelah getPilihanMataUang, mu2=" << mu2 << ", exitRequested=" << exitRequested << endl;
-                
+
                 if (exitRequested)
                 {
-                    cout << "[DEBUG] exitRequested = true, keluar dari loop mata uang sama" << endl;
                     break;
                 }
             }
@@ -331,31 +332,25 @@ int main()
             // Dapatkan jumlah input
             double input = getJumlahInput(string(uang[mu1 - 1]), symbol[mu1 - 1],
                                         string(uang[mu2 - 1]), symbol[mu2 - 1], exitRequested);
-            
-            // DEBUG: Tambahkan log untuk memastikan exitRequested bekerja
-            cout << "[DEBUG] exitRequested setelah getJumlahInput: " << exitRequested << endl;
-            
+
             if (exitRequested)
             {
-                cout << "[DEBUG] Melanjutkan karena exitRequested = true" << endl;
                 continue;
             }
 
             // Perhitungan konversi
             clearscreen();
             tampilkanHeader("HASIL KONVERSI");
-            cout << "\n[SISTEM] Menghitung konversi...\n";
             
             double output = input / rasio[mu1 - 1] * rasio[mu2 - 1];
 
             //==== Tampilan Hasil ====
-            cout << "\n+========================================+\n";
-            cout << "| Dari    : " << left << setw(29) << (string(uang[mu1 - 1]) + " (" + symbol[mu1 - 1] + ")") << "|\n";
-            cout << "| Ke      : " << left << setw(29) << (string(uang[mu2 - 1]) + " (" + symbol[mu2 - 1] + ")") << "|\n";
-            cout << "| Jumlah  : " << left << setw(29) << (symbol[mu1 - 1] + formatCurrency(input)) << "|\n";
-            cout << "|----------------------------------------|\n";
-            cout << "| Hasil   : " << left << setw(29) << (symbol[mu2 - 1] + formatCurrency(output)) << "|\n";
-            cout << "+========================================+\n";
+            cout << "| Dari    : " << left << setw(39) << (string(uang[mu1 - 1]) + " (" + symbol[mu1 - 1] + ")") << "|\n";
+            cout << "| Ke      : " << left << setw(39) << (string(uang[mu2 - 1]) + " (" + symbol[mu2 - 1] + ")") << "|\n";
+            cout << "| Jumlah  : " << left << setw(39) << (symbol[mu1 - 1] + formatCurrency(input)) << "|\n";
+            cout << "|--------------------------------------------------|\n";
+            cout << "| Hasil   : " << left << setw(39) << (symbol[mu2 - 1] + formatCurrency(output)) << "|\n";
+            cout << "+==================================================+\n";
             
             // Tampilkan rasio konversi
             cout << "\n[INFO] Rasio konversi: 1 " << symbol[mu1 - 1] << " = "
@@ -363,7 +358,6 @@ int main()
 
             cout << "\nTekan ENTER untuk melanjutkan...";
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            cin.get();
 
             // Simpan riwayat
             ostringstream oss;
