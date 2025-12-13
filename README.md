@@ -1,74 +1,162 @@
-# 💱 Konversi Mata Uang CLI
+# 💰 Konversi Mata Uang C++ (CLI)
 
-Aplikasi berbasis Command Line Interface (CLI) sederhana yang dibangun dengan C++ untuk melakukan konversi mata uang secara cepat. Alat ini dirancang agar mudah digunakan, memungkinkan pengguna untuk mengkonversi nilai antara berbagai mata uang yang didukung serta melacak seluruh riwayat transaksi konversi dalam satu sesi.
+Program konversi mata uang berbasis command-line sederhana yang dibangun menggunakan C++. Mendukung konversi antar 5 mata uang utama dengan fitur validasi input dan riwayat transaksi.
 
----
+## 🎯 Fitur Utama
 
-## ✨ Fitur Utama
+- **Konversi Mata Uang**: Konversi antar 5 mata uang (Rupiah, Dollar, Ringgit, Yen, Euro)
+- **Validasi Input**: Penanganan kesalahan input angka dan pilihan menu
+- **Riwayat Transaksi**: Menyimpan dan menampilkan seluruh konversi dalam sesi
+- **Cross-Platform**: Otomatis mendeteksi sistem operasi (Windows/Linux/Mac)
+- **Tampilan Ramah**: Antarmuka menu jelas dengan simbol 
 
-*   **Konversi Fleksibel**: Lakukan konversi instan antara mata uang yang tersedia.
-*   **Riwayat Transaksi**: Lihat kembali semua konversi yang telah Anda lakukan selama sesi aplikasi berlangsung.
-*   **Validasi Input Cerdas**: Aplikasi dilengkapi dengan penanganan kesalahan input untuk memastikan proses konversi yang lancar dan bebas masalah.
+## 🌍 Mata Uang Didukung
 
----
+| Mata Uang | Simbol | Kode | Rasio terhadap Dollar |
+|-----------|--------|------|-----------------------|
+| Rupiah    | Rp     | IDR  | 17.000                |
+| Dollar    | $      | USD  | 1 (acuan)             |
+| Ringgit   | RM     | MYR  | 5                     |
+| Yen       | Y      | JPY  | 150                   |
+| Euro      | E      | EUR  | 1.15                  |
 
-## 🌍 Mata Uang yang Didukung
+*Catatan: Sistem dirancang untuk memudahkan penambahan mata uang baru sesuai kebutuhan.*
 
-Aplikasi ini mendukung konversi antara mata uang global berikut:
+## 🚀 Cara Menjalankan
 
-*   **Rupiah** (Rp) 🇮🇩
-*   **Dollar** ($) 🇺🇸
-*   **Ringgit** (MYR) 🇲🇾
-*   **Yen** (Y) 🇯🇵
-*   **Euro** (E) 🇪🇺
+### Persyaratan
+- Kompiler C++ (g++, clang++, dll)
 
----
+### Kompilasi
 
-## 🚀 Instalasi & Penggunaan
-
-Untuk bisa menggunakan aplikasi ini, Anda memerlukan kompiler C++ (seperti `g++`) yang terinstal di sistem Anda.
-
-### ⚙️ Kompilasi Kode Sumber
-
-1.  Buka terminal Anda.
-2.  Navigasi ke direktori tempat file `Project.cpp` berada.
-3.  Jalankan perintah kompilasi berikut:
-
-    ```bash
-    g++ Project.cpp -o konversi
-    ```
-
-### ▶️ Menjalankan Aplikasi
-
-Setelah proses kompilasi selesai, Anda dapat menjalankan aplikasi dengan perintah:
-
+**Untuk Linux:**
 ```bash
-./konversi
+g++ Project.cpp -o Project.out
 ```
 
----
-
-## 👩‍💻 Cara Menggunakan Aplikasi
-
-Setelah aplikasi dijalankan, Anda akan disambut dengan menu utama yang intuitif:
-
-```
-+======================================+
-|        PROGRAM KONVERSI MATA UANG    |
-+======================================+
-|  [1] Konversi Mata Uang              |
-|  [2] Lihat Riwayat Konversi          |
-|  [3] Keluar Program                  |
-+======================================+
-Pilih menu (1-3):
+**Untuk Windows:**
+```bash
+g++ Project.cpp -o Project.exe
 ```
 
-*   🔢 **Pilih `1`**: Masuk ke mode konversi. Ikuti petunjuk untuk memilih mata uang asal, mata uang tujuan, dan jumlah yang ingin Anda konversi.
-*   📜 **Pilih `2`**: Akses daftar riwayat konversi Anda, menampilkan semua transaksi yang telah dilakukan di sesi saat ini.
-*   🚪 **Pilih `3`**: Tutup dan keluar dari program.
+### Eksekusi
 
----
+**Untuk Linux:**
+```bash
+./Project.out
+```
+
+**Untuk Windows:**
+```bash
+Project.exe
+```
+
+## 📱 Cara Penggunaan
+
+### Menu Utama
+Program menampilkan 3 pilihan:
+1. **Konversi Mata Uang** - Melakukan konversi
+2. **Lihat Riwayat Konversi** - Menampilkan riwayat sesi
+3. **Keluar Program** - Mengakhiri program
+
+## 🏗️ Struktur Kode
+
+### Fungsi Utama
+- [`clearscreen()`](Project.cpp:14-21) - Membersihkan layar sesuai OS
+- [`isValidNumber()`](Project.cpp:24-49) - Validasi input angka
+- [`main()`](Project.cpp:51-394) - Program utama
+
+### Variabel Global
+- [`uang`](Project.cpp:53) - Daftar nama mata uang
+- [`symbol`](Project.cpp:54) - Simbol mata uang
+- [`rasio`](Project.cpp:55) - Rasio konversi ke Dollar
+- [`riwayat`](Project.cpp:57) - Menyimpan riwayat konversi
+
+### Rumus Konversi
+Program menggunakan rumus konversi dua tahap melalui Dollar sebagai acuan:
+
+```
+output = input / rasio_asal * rasio_tujuan
+
+Rasio antar mata uang:
+rasio_tujuan / rasio_asal
+```
+
+Contoh: Konversi 100.000 IDR ke USD
+- Rasio IDR = 17.000, Rasio USD = 1
+- 100.000 / 17.000 × 1 = 5.88 USD
+
+### Alur Program
+1. Tampilkan menu utama
+2. Proses pilihan pengguna
+3. Validasi input (angka, pilihan, nilai positif)
+4. Hitung konversi menggunakan rumus di atas
+5. Simpan ke riwayat
+6. Ulangi atau keluar
+
+## ⚠️ Validasi Input & Exception Handling
+
+Program menerapkan validasi input ketat pada setiap langkah:
+
+### 1. Validasi Pilihan Menu
+- **Exception**: `std::ios::failbit` jika input bukan angka
+- **Penanganan**: Membersihkan buffer dan meminta input ulang
+- **Validasi**: Hanya menerima nilai 1, 2, atau 3
+
+### 2. Validasi Pilihan Mata Uang
+- **Exception**: `std::ios::failbit` jika input bukan angka
+- **Validasi Rentang**: Hanya menerima nilai 1-5 (sesuai jumlah mata uang)
+- **Validasi Logika**: Tidak boleh memilih mata uang asal dan tujuan yang sama
+
+### 3. Validasi Jumlah Konversi
+- **Exception**: `std::invalid_argument` atau `std::out_of_range` pada `std::stod()`
+- **Validasi Format**: Menggunakan fungsi [`isValidNumber()`](Project.cpp:24-49) untuk memastikan:
+  - Hanya mengandung digit dan satu titik desimal
+  - Minimal memiliki satu digit
+  - Tidak mengandung karakter selain digit dan titik
+- **Validasi Nilai**:
+  - Tidak boleh negatif
+  - Tidak boleh nol
+  - Maksimal sesuai batas `double`
+
+### 4. Mekanisme Penanganan Kesalahan
+```cpp
+// Contoh penanganan exception pada input angka
+try {
+    input = stod(inputStr);
+    if (input <= 0) {
+        // Validasi nilai
+    }
+} catch (...) {
+    // Penanganan exception umum
+}
+```
+
+### 5. Respon Sistem terhadap Error
+- **Clear Screen**: Sistem memuat ulang tampilan setiap kali terjadi error
+- **Pesan Error**: Menampilkan pesan spesifik sesuai jenis error
+- **Looping**: Meminta input ulang tanpa keluar dari program
+- **Buffer Cleanup**: Membersihkan input buffer sebelum meminta input baru
+
+## ⚠️ Catatan Teknis
+
+- Rasio konversi menggunakan Dollar sebagai acuan
+- Program menggunakan validasi input ketat
+- Riwayat hanya tersimpan selama sesi berlangsung
+- Mendukung input desimal (contoh: 100.50)
+- Mendeteksi sistem operasi secara otomatis untuk perintah clear screen
 
 ## 🤝 Kontribusi
 
-Kami sangat menyambut setiap kontribusi untuk pengembangan proyek ini! Jika Anda tertarik untuk menambahkan fitur baru, memperbaiki bug, atau menyempurnakan kode, silakan baca panduan kontribusi lengkap kami di [Contributing.md](Contributing.md).
+Untuk berkontribusi pada proyek ini, silakan ikuti panduan kontribusi yang terdapat di [Contributing.md](Contributing.md).
+
+**Ringkasan proses kontribusi:**
+1. Ambil kode terbaru dari branch `main`
+2. Buat branch fitur baru dengan format `fitur/nama-fitur`
+3. Lakukan perubahan dan komit dengan format pesan `"feat: deskripsi perubahan"`
+4. Push ke repository dan buat Pull Request ke branch `main`
+5. Tunggu review dan approval dari kontributor lain
+
+## 📄 Lisensi
+
+Proyek ini bersifat open-source untuk pembelajaran.

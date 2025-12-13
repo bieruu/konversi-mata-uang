@@ -1,10 +1,8 @@
 # 📚 Contributing
 
----
-
 ## 🛠️ Panduan Kontribusi (Wajib Dibaca!)
 
-Branch utama (`main`) dilindungi. Kontribusi wajib dilakukan melalui Pull Request (PR).
+Berikut panduan untuk berkontribusi pada proyek Konversi Mata Uang C++. Branch utama (`main`) dilindungi. Kontribusi wajib dilakukan melalui Pull Request (PR).
 
 ### Alur Kerja Kontribusi:
 
@@ -35,10 +33,10 @@ Ikuti langkah-langkah ini setiap kali Anda ingin menambahkan fitur/perbaikan:
     ```
 
 5.  **Buka Pull Request (PR):**
-    * Buka GitHub.
-    * Klik tombol **"Compare & pull request"** yang muncul di notifikasi.
-    * Pastikan target *branch* adalah **`main`**.
-    * Deskripsikan perubahan Anda dan kirim PR.
+    - Buka GitHub.
+    - Klik tombol **"Compare & pull request"** yang muncul di notifikasi.
+    - Pastikan target *branch* adalah **`main`**.
+    - Deskripsikan perubahan Anda dan kirim PR.
 
 6.  **Tunggu Review & Merge:**
     PR Anda akan ditinjau oleh setidaknya satu kontributor lain sebelum dapat digabungkan ke `main`.
