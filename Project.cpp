@@ -65,7 +65,6 @@ int main()
     while (jalan)
     {
         //==== MENU UTAMA ====
-        clearscreen();
         cout << "+======================================+\n";
         cout << "|        PROGRAM KONVERSI MATA UANG    |\n";
         cout << "+======================================+\n";
@@ -74,13 +73,14 @@ int main()
         cout << "|  [3] Keluar Program                  |\n";
         cout << "+======================================+\n";
         cout << "Pilih menu (1-3): ";
-
+        
         cin >> pilihan;
-
+        
         if (!cin)
         {
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            clearscreen();
             cout << "\n[!] Input tidak valid. Harap masukkan angka (1-3).\n";
             continue;
         }
@@ -388,6 +388,7 @@ int main()
 
         else
         {
+            clearscreen();
             cout << "Pilihan tidak Valid.\n";
         }
     }
