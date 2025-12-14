@@ -98,12 +98,30 @@ bool isValidNumber(const string& str)
     return hasDigit;
 }
 
-// Fungsi untuk mengonversi angka ke string dengan 2 desimal
+// Fungsi untuk mengonversi angka ke string dengan 2 desimal dan pemisah ribuan
 string formatCurrency(double amount)
 {
     ostringstream oss;
     oss << fixed << setprecision(2) << amount;
-    return oss.str();
+    string result = oss.str();
+
+    // Temukan posisi titik desimal
+    size_t dotPos = result.find('.');
+    if (dotPos == string::npos) {
+        dotPos = result.length();
+    }
+
+    // Bagian sebelum titik desimal
+    string integerPart = result.substr(0, dotPos);
+    string decimalPart = (dotPos < result.length()) ? result.substr(dotPos) : "";
+
+    // Tambahkan pemisah ribuan
+    int length = integerPart.length();
+    for (int i = length - 3; i > 0; i -= 3) {
+        integerPart.insert(i, ",");
+    }
+
+    return integerPart + decimalPart;
 }
 
 // Helper function to get user input with exit handling
@@ -250,7 +268,7 @@ int main()
     // Bisa Ditambahkan Mata Uang Lagi Sesuai Kebutuhan
     vector<string_view> uang{"Rupiah", "Dollar", "Ringgit", "Yen", "Euro"};
     vector<string> symbol{"Rp", "$", "MYR", "Y", "E"};
-    vector<double> rasio{17000, 1, 5, 150, 1.15};
+    vector<double> rasio{17000, 1, 5, 150, 0.85};
 
     vector<string> riwayat;
     bool jalan = true;
@@ -361,10 +379,9 @@ int main()
 
             // Simpan riwayat
             ostringstream oss;
-            oss << fixed << setprecision(2)
-                << symbol[mu1 - 1] << input << " (" << uang[mu1 - 1] << ")"
+            oss << symbol[mu1 - 1] << formatCurrency(input) << " (" << uang[mu1 - 1] << ")"
                 << " = "
-                << symbol[mu2 - 1] << output << " (" << uang[mu2 - 1] << ")";
+                << symbol[mu2 - 1] << formatCurrency(output) << " (" << uang[mu2 - 1] << ")";
             riwayat.push_back(oss.str());
             
             cout << "\n[SISTEM] Menyimpan riwayat konversi...\n";
