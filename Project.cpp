@@ -20,23 +20,33 @@ void clearscreen()
     #endif
 }
 
-// Fungsi tampilkan header program dengan teks center
-void tampilkanHeader(const string& judul)
+// Fungsi untuk membuat border dinamis berdasarkan lebar yang diberikan
+string generateBorder(int width)
 {
-    string border = "+==================================================+";
+    string border = "+";
+    for (int i = 0; i < width; i++) {
+        border += "=";
+    }
+    border += "+";
+    return border;
+}
+
+// Fungsi tampilkan header program dengan teks center
+void tampilkanHeader(const string& judul, int width = 50)
+{
+    string border = generateBorder(width);
     cout << border << "\n";
-    
-    int totalWidth = 50; // Lebar dalam border
+
     int judulLength = judul.length();
-    int leftPadding = (totalWidth - judulLength) / 2;
-    int rightPadding = totalWidth - judulLength - leftPadding;
-    
+    int leftPadding = (width - judulLength) / 2;
+    int rightPadding = width - judulLength - leftPadding;
+
     cout << "|";
     for (int i = 0; i < leftPadding; i++) cout << " ";
     cout << judul;
     for (int i = 0; i < rightPadding; i++) cout << " ";
     cout << "|\n";
-    
+
     cout << border << "\n";
 }
 
@@ -154,7 +164,7 @@ int getPilihanMataUang(const vector<string_view>& uang, const vector<string>& sy
         
         for (int i = 0; i < uang.size(); i++)
         {
-            cout << "   [" << i + 1 << "] " << left << setw(10) << (string(uang[i]) + " (" + symbol[i] + ")") << "\n";
+            cout << "|   [" << i + 1 << "] " << left << setw(32) << (string(uang[i]) + " (" + symbol[i] + ")") << " |\n";
         }
         cout << "+----------------------------------------+\n";
         cout << "|  " << left << setw(35) << judul << ":  |\n";
@@ -371,8 +381,10 @@ int main()
             cout << "+==================================================+\n";
             
             // Tampilkan rasio konversi
+            cout << fixed << setprecision(2);
+            double conversionRatio = rasio[mu2 - 1] / rasio[mu1 - 1];
             cout << "\n[INFO] Rasio konversi: 1 " << symbol[mu1 - 1] << " = "
-                 << rasio[mu2 - 1]/rasio[mu1 - 1] << " " << symbol[mu2 - 1] << "\n";
+                 << formatCurrency(conversionRatio) << " " << symbol[mu2 - 1] << "\n";
 
             cout << "\nTekan ENTER untuk melanjutkan...";
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -392,29 +404,49 @@ int main()
         else if (pilihan == 2)
         {
             clearscreen();
-            tampilkanHeader("RIWAYAT KONVERSI");
+
+            // Hitung lebar maksimum yang dibutuhkan untuk riwayat
+            int maxWidth = 50; // Lebar default
+            if (!riwayat.empty())
+            {
+                // Temukan panjang maksimum dari riwayat
+                for (const string& entry : riwayat)
+                {
+                    int entryLength = entry.length() + 6; // +6 untuk "[X] " dan spasi
+                    if (entryLength > maxWidth)
+                    {
+                        maxWidth = entryLength;
+                    }
+                }
+                // Pastikan lebar minimal 50
+                maxWidth = max(maxWidth, 50);
+            }
+
+            tampilkanHeader("RIWAYAT KONVERSI", maxWidth);
 
             if (riwayat.empty())
             {
-                cout << "|";
                 string emptyMsg = "Belum ada riwayat konversi.";
-                int totalWidth = 50;
                 int msgLength = emptyMsg.length();
-                int leftPadding = (totalWidth - msgLength) / 2;
-                int rightPadding = totalWidth - msgLength - leftPadding;
+                int leftPadding = (maxWidth - msgLength) / 2;
+                int rightPadding = maxWidth - msgLength - leftPadding;
+
+                cout << "|";
                 for (int i = 0; i < leftPadding; i++) cout << " ";
                 cout << emptyMsg;
                 for (int i = 0; i < rightPadding; i++) cout << " ";
                 cout << "|\n";
-                cout << "+==================================================+\n";
+                cout << generateBorder(maxWidth) << "\n";
             }
             else
             {
                 for (int i = 0; i < (int)riwayat.size(); i++)
                 {
-                    cout << "| [" << i + 1 << "] " << left << setw(45) << riwayat[i] << "|\n";
+                    // Hitung padding yang dibutuhkan
+                    int contentWidth = maxWidth - 6; // -6 untuk "| [X] " dan " |"
+                    cout << "| [" << i + 1 << "] " << left << setw(contentWidth) << riwayat[i] << " |\n";
                 }
-                cout << "+==================================================+\n";
+                cout << generateBorder(maxWidth) << "\n";
             }
 
             cout << "\nTekan ENTER untuk melanjutkan...";
