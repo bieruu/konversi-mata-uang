@@ -1,12 +1,13 @@
 # 💰 Konversi Mata Uang C++ (CLI)
 
-Program konversi mata uang berbasis command-line sederhana menggunakan C++. Mendukung konversi antar 5 mata uang dengan validasi input dan riwayat transaksi.
+Program konversi mata uang berbasis command-line menggunakan C++. Mendukung konversi antar 5 mata uang dengan validasi input, riwayat transaksi, dan fitur hapus riwayat.
 
 ## 🎯 Fitur
 
 - Konversi antar 5 mata uang (Rupiah, Dollar, Ringgit, Yen, Euro)
 - Validasi input angka dan pilihan menu
 - Riwayat transaksi dalam sesi
+- Hapus seluruh riwayat
 - Cross-platform (Windows/Linux/Mac)
 - Tampilan ramah dengan simbol
 
@@ -18,7 +19,7 @@ Program konversi mata uang berbasis command-line sederhana menggunakan C++. Mend
 | Dollar    | $      | USD  | 1 (acuan)             |
 | Ringgit   | RM     | MYR  | 5                     |
 | Yen       | Y      | JPY  | 150                   |
-| Euro      | E      | EUR  | 1.15                  |
+| Euro      | E      | EUR  | 0.85                  |
 
 ## 🚀 Cara Menjalankan
 
@@ -52,10 +53,11 @@ Project.exe
 ## 📱 Cara Penggunaan
 
 ### Menu Utama
-Program menampilkan 3 pilihan:
+Program menampilkan 4 pilihan:
 1. **Konversi Mata Uang** - Melakukan konversi
 2. **Lihat Riwayat Konversi** - Menampilkan riwayat sesi
-3. **Keluar Program** - Mengakhiri program
+3. **Hapus Riwayat Konversi** - Menghapus seluruh riwayat
+4. **Keluar Program** - Mengakhiri program
 
 ## 🏗️ Struktur Kode
 
@@ -99,7 +101,7 @@ Program menerapkan validasi input ketat pada setiap langkah:
 ### 1. Validasi Pilihan Menu
 - **Exception**: `std::ios::failbit` jika input bukan angka
 - **Penanganan**: Membersihkan buffer dan meminta input ulang
-- **Validasi**: Hanya menerima nilai 1, 2, atau 3
+- **Validasi**: Hanya menerima nilai 1, 2, 3, atau 4
 
 ### 2. Validasi Pilihan Mata Uang
 - **Exception**: `std::ios::failbit` jika input bukan angka
