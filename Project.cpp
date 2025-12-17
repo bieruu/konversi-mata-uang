@@ -294,9 +294,10 @@ int main()
         tampilkanHeader("PROGRAM KONVERSI MATA UANG");
         cout << "|  [1] Konversi Mata Uang                          |\n";
         cout << "|  [2] Lihat Riwayat Konversi                      |\n";
-        cout << "|  [3] Keluar Program                              |\n";
+        cout << "|  [3] Hapus Riwayat Konversi                      |\n";
+        cout << "|  [4] Keluar Program                              |\n";
         cout << "+==================================================+\n";
-        cout << "Pilih menu (1-3): ";
+        cout << "Pilih menu (1-4): ";
         
         cin >> pilihan;
         
@@ -305,7 +306,7 @@ int main()
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             clearscreen();
-            tampilkanError("Input tidak valid. Harap masukkan angka (1-3).");
+            tampilkanError("Input tidak valid. Harap masukkan angka (1-4).");
             continue;
         }
 
@@ -456,8 +457,95 @@ int main()
             clearscreen();
         }
 
-        //==== KELUAR ====
+        //==== HAPUS RIWAYAT ====
         else if (pilihan == 3)
+        {
+            clearscreen();
+            cout << "[SISTEM] Masuk ke opsi hapus riwayat konversi\n";
+            
+            if (riwayat.empty())
+            {
+                cout << "\n[!] Tidak ada riwayat untuk dihapus.\n";
+                cout << "\nTekan ENTER untuk melanjutkan...";
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cin.get();
+                clearscreen();
+                continue;
+            }
+            
+            // Tampilkan konfirmasi dialog
+            cout << "\n+==================================================+\n";
+            cout << "|  Apakah Anda yakin ingin menghapus seluruh       |\n";
+            cout << "|  riwayat konversi?                               |\n";
+            cout << "|                                                  |\n";
+            cout << "|  [1] Ya, hapus seluruh riwayat                   |\n";
+            cout << "|  [2] Tidak, batalkan                             |\n";
+            cout << "+==================================================+\n";
+            
+            bool konfirmasiValid = false;
+            while (!konfirmasiValid)
+            {
+                cout << "Pilih (1-2): ";
+                
+                int konfirmasi;
+                cin >> konfirmasi;
+                
+                if (!cin)
+                {
+                    cin.clear();
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    clearscreen();
+                    cout << "[SISTEM] Masuk ke opsi hapus riwayat konversi\n";
+                    cout << "\n+==================================================+\n";
+                    cout << "|  Apakah Anda yakin ingin menghapus seluruh       |\n";
+                    cout << "|  riwayat konversi?                               |\n";
+                    cout << "|                                                  |\n";
+                    cout << "|  [1] Ya, hapus seluruh riwayat                   |\n";
+                    cout << "|  [2] Tidak, batalkan                             |\n";
+                    cout << "+==================================================+\n";
+                    tampilkanError("Input tidak valid. Harap masukkan angka (1-2).");
+                    continue;
+                }
+                
+                if (konfirmasi == 1)
+                {
+                    konfirmasiValid = true;
+                    clearscreen();
+                    cout << "[SISTEM] Menghapus seluruh riwayat konversi...\n";
+                    
+                    // Hapus seluruh riwayat dari penyimpanan lokal (vector)
+                    riwayat.clear();
+                    
+                    cout << "\n[✓] Seluruh riwayat konversi berhasil dihapus.\n";
+                    cout << "\nTekan ENTER untuk melanjutkan...";
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    cin.get();
+                    clearscreen();
+                }
+                else if (konfirmasi == 2)
+                {
+                    konfirmasiValid = true;
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    clearscreen();
+                }
+                else
+                {
+                    clearscreen();
+                    cout << "[SISTEM] Masuk ke opsi hapus riwayat konversi\n";
+                    cout << "\n+==================================================+\n";
+                    cout << "|  Apakah Anda yakin ingin menghapus seluruh       |\n";
+                    cout << "|  riwayat konversi?                               |\n";
+                    cout << "|                                                  |\n";
+                    cout << "|  [1] Ya, hapus seluruh riwayat                   |\n";
+                    cout << "|  [2] Tidak, batalkan                             |\n";
+                    cout << "+==================================================+\n";
+                    tampilkanError("Pilihan tidak valid. Harap masukkan angka (1-2).");
+                }
+            }
+        }
+
+        //==== KELUAR ====
+        else if (pilihan == 4)
         {
             clearscreen();
             cout << "\nTerima Kasih telah menggunakan program konversi mata uang!\n";
@@ -467,7 +555,7 @@ int main()
         else
         {
             clearscreen();
-            tampilkanError("Pilihan tidak valid. Harap masukkan angka (1-3).");
+            tampilkanError("Pilihan tidak valid. Harap masukkan angka (1-4).");
         }
     }
     return 0;
