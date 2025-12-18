@@ -7,8 +7,79 @@
 #include <sstream>
 #include <limits>
 #include <cstdlib>
+#include <map>
+#include <curl/curl.h>
 
 using namespace std;
+
+// Struktur untuk menyimpan informasi mata uang
+struct CurrencyInfo {
+    string name;
+    string symbol;
+    double rate;
+};
+
+// Callback function untuk menangani data dari curl
+size_t WriteCallback(void* contents, size_t size, size_t nmemb, string* userp) {
+    size_t totalSize = size * nmemb;
+    userp->append((char*)contents, totalSize);
+    return totalSize;
+}
+
+// Fungsi untuk mengambil data nilai tukar dari API
+bool getExchangeRates(map<string, CurrencyInfo>& currencies) {
+    CURL* curl;
+    CURLcode res;
+    string readBuffer;
+    
+    curl = curl_easy_init();
+    if (curl) {
+        // API endpoint untuk nilai tukar terhadap USD
+        string url = "https://api.exchangerate-api.com/v4/latest/USD";
+        
+        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        curl_easy_setopt(curl, CURLOPT_TIMEOUT, 10L); // Timeout 10 detik
+        
+        res = curl_easy_perform(curl);
+        curl_easy_cleanup(curl);
+        
+        if (res != CURLE_OK) {
+            return false;
+        }
+        
+        // Parse JSON sederhana untuk mendapatkan nilai tukar
+        // Mencari nilai tukar untuk mata uang yang didukung
+        if (readBuffer.find("\"rates\":{") != string::npos) {
+            // Update nilai tukar untuk mata uang yang didukung
+            vector<string> currencyCodes = {"IDR", "MYR", "JPY", "EUR", "CNY"};
+            
+            for (const string& code : currencyCodes) {
+                if (currencies.find(code) != currencies.end()) {
+                    size_t pos = readBuffer.find("\"" + code + "\":");
+                    if (pos != string::npos) {
+                        size_t start = readBuffer.find_first_of("0123456789", pos);
+                        size_t end = readBuffer.find_first_not_of("0123456789.", start);
+                        if (start != string::npos && end != string::npos) {
+                            string rateStr = readBuffer.substr(start, end - start);
+                            currencies[code].rate = stod(rateStr);
+                        }
+                    }
+                }
+            }
+            
+            // USD selalu 1 sebagai acuan
+            if (currencies.find("USD") != currencies.end()) {
+                currencies["USD"].rate = 1.0;
+            }
+            
+            return true;
+        }
+    }
+    
+    return false;
+}
 
 // Fungsi clearscreen yang mendeteksi sistem operasi secara otomatis
 void clearscreen()
@@ -275,11 +346,22 @@ double getJumlahInput(const string& dariMataUang, const string& dariSymbol,
 
 int main()
 {
-    // Bisa Ditambahkan Mata Uang Lagi Sesuai Kebutuhan
-    vector<string_view> uang{"Rupiah", "Dollar", "Ringgit", "Yen", "Euro"};
-    vector<string> symbol{"Rp", "$", "MYR", "Y", "E"};
-    vector<double> rasio{17000, 1, 5, 150, 0.85};
-
+    // Inisialisasi curl global
+    curl_global_init(CURL_GLOBAL_DEFAULT);
+    
+    // Struktur data untuk mata uang
+    map<string, CurrencyInfo> currencies = {
+        {"IDR", {"Rupiah", "Rp", 17000.0}},
+        {"USD", {"Dollar", "$", 1.0}},
+        {"MYR", {"Ringgit", "RM", 5.0}},
+        {"JPY", {"Yen", "Y", 150.0}},
+        {"EUR", {"Euro", "E", 0.85}},
+        {"CNY", {"Yuan", "CNY", 7.05}}
+    };
+    
+    // Coba ambil nilai tukar dari API
+    bool apiSuccess = getExchangeRates(currencies);
+    
     vector<string> riwayat;
     bool jalan = true;
     int pilihan;
@@ -287,6 +369,19 @@ int main()
     double input;
     string inputStr;
     string mataUangAsalInput, mataUangTujuanInput, jumlahInput;
+    
+    // Konversi map ke vector untuk tampilan menu
+    vector<string> currencyCodes;
+    vector<string_view> uang;
+    vector<string> symbol;
+    vector<double> rasio;
+    
+    for (const auto& pair : currencies) {
+        currencyCodes.push_back(pair.first);
+        uang.push_back(pair.second.name);
+        symbol.push_back(pair.second.symbol);
+        rasio.push_back(pair.second.rate);
+    }
 
     while (jalan)
     {
@@ -371,7 +466,13 @@ int main()
             clearscreen();
             tampilkanHeader("HASIL KONVERSI");
             
-            double output = input / rasio[mu1 - 1] * rasio[mu2 - 1];
+            // Ambil nilai tukar terbaru dari map currencies
+            string code1 = currencyCodes[mu1 - 1];
+            string code2 = currencyCodes[mu2 - 1];
+            double rate1 = currencies[code1].rate;
+            double rate2 = currencies[code2].rate;
+            
+            double output = input / rate1 * rate2;
 
             //==== Tampilan Hasil ====
             cout << "| Dari    : " << left << setw(39) << (string(uang[mu1 - 1]) + " (" + symbol[mu1 - 1] + ")") << "|\n";
