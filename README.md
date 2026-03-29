@@ -28,14 +28,14 @@ Program konversi mata uang berbasis command-line menggunakan C++. Mendukung konv
 
 ### Kompilasi
 
-**Untuk Linux:**
+**Linux:**
 ```bash
-g++ Project.cpp -o Project.out
+g++ Project.cpp -o Project.out -lcurl
 ```
 
-**Untuk Windows:**
+**Windows:**
 ```bash
-g++ Project.cpp -o Project.exe
+g++ Project.cpp -o Project.exe -lcurl
 ```
 
 ### Eksekusi
