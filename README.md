@@ -1,8 +1,8 @@
-# 💰 Konversi Mata Uang C++ (CLI)
+# Konversi Mata Uang C++ (CLI)
 
 Program konversi mata uang berbasis command-line menggunakan C++. Mendukung konversi antar 5 mata uang dengan validasi input, riwayat transaksi, dan fitur hapus riwayat.
 
-## 🎯 Fitur
+## Fitur
 
 - Konversi antar 5 mata uang (Rupiah, Dollar, Ringgit, Yen, Euro)
 - Validasi input angka dan pilihan menu
@@ -11,17 +11,17 @@ Program konversi mata uang berbasis command-line menggunakan C++. Mendukung konv
 - Cross-platform (Windows/Linux/Mac)
 - Tampilan ramah dengan simbol
 
-## 🌍 Mata Uang
+## Mata Uang
 
 | Mata Uang | Simbol | Kode | Rasio terhadap Dollar |
-|-----------|--------|------|-----------------------|
+|--------|--------|------|-----------------------|
 | Rupiah    | Rp     | IDR  | 17.000                |
 | Dollar    | $      | USD  | 1 (acuan)             |
 | Ringgit   | RM     | MYR  | 5                     |
 | Yen       | Y      | JPY  | 150                   |
 | Euro      | E      | EUR  | 0.85                  |
 
-## 🚀 Cara Menjalankan
+## Cara Menjalankan
 
 ### Persyaratan
 - Kompiler C++ (g++, clang++, dll)
@@ -50,7 +50,7 @@ g++ Project.cpp -o Project.exe
 Project.exe
 ```
 
-## 📱 Cara Penggunaan
+## Cara Penggunaan
 
 ### Menu Utama
 Program menampilkan 4 pilihan:
@@ -59,7 +59,7 @@ Program menampilkan 4 pilihan:
 3. **Hapus Riwayat Konversi** - Menghapus seluruh riwayat
 4. **Keluar Program** - Mengakhiri program
 
-## 🏗️ Struktur Kode
+## Struktur Kode
 
 ### Fungsi Utama
 - [`clearscreen()`](Project.cpp:14-21) - Membersihkan layar sesuai OS
@@ -94,7 +94,7 @@ Contoh: Konversi 100.000 IDR ke USD
 5. Simpan ke riwayat
 6. Ulangi atau keluar
 
-## ⚠️ Validasi Input & Exception Handling
+## Validasi Input & Exception Handling
 
 Program menerapkan validasi input ketat pada setiap langkah:
 
@@ -138,7 +138,7 @@ try {
 - **Looping**: Meminta input ulang tanpa keluar dari program
 - **Buffer Cleanup**: Membersihkan input buffer sebelum meminta input baru
 
-## ⚠️ Catatan Teknis
+## Catatan Teknis
 
 - Rasio konversi menggunakan Dollar sebagai acuan
 - Program menggunakan validasi input ketat
@@ -146,7 +146,7 @@ try {
 - Mendukung input desimal (contoh: 100.50)
 - Mendeteksi sistem operasi secara otomatis untuk perintah clear screen
 
-## 🤝 Kontribusi
+## Kontribusi
 
 Untuk berkontribusi pada proyek ini, silakan ikuti panduan kontribusi yang terdapat di [Contributing.md](Contributing.md).
 
@@ -157,6 +157,6 @@ Untuk berkontribusi pada proyek ini, silakan ikuti panduan kontribusi yang terda
 4. Push ke repository dan buat Pull Request ke branch `main`
 5. Tunggu review dan approval dari kontributor lain
 
-## 📄 Lisensi
+## Lisensi
 
 Proyek ini bersifat open-source untuk pembelajaran.

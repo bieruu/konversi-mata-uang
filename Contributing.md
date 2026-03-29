@@ -1,33 +1,33 @@
-# 📚 Contributing
+# Contributing
 
-## 🛠️ Panduan Kontribusi
+## Panduan Kontribusi
 
-Kontribusi wajib melalui Pull Request ke branch `main`.
+Anda harus mengirimkan semua perubahan melalui Pull Request ke branch main.
 
-### Alur Kerja:
+Berikut adalah langkah-langkah yang perlu diikuti:
 
-1.  **Ambil Kode Terbaru:**
-    ```bash
-    git checkout main
-    git pull origin main
-    ```
+1. **Ambil kode terbaru dari branch main**
+   ```bash
+   git checkout main
+   git pull origin main
+   ```
 
-2.  **Buat Cabang Fitur:**
-    ```bash
-    git checkout -b fitur/nama-fitur
-    ```
+2. **Buat cabang fitur baru**
+   ```bash
+   git checkout -b fitur/nama-fitur
+   ```
 
-3.  **Kembangkan & Komit:**
-    ```bash
-    git add .
-    git commit -m "feat: Menambahkan [Nama Fitur]"
-    ```
+3. **Kerjakan perubahan dan buat commit**
+   ```bash
+   git add .
+   git commit -m "feat: Menambahkan [Nama Fitur]"
+   ```
 
-4.  **Unggah & PR:**
-    ```bash
-    git push origin fitur/nama-fitur
-    ```
-    Buka GitHub, buat Pull Request ke branch `main`.
+4. **Kirim perubahan ke repository**
+   ```bash
+   git push origin fitur/nama-fitur
+   ```
+   Setelah itu, buka halaman GitHub, buat Pull Request ke branch main.
 
-5.  **Review & Merge:**
-    PR ditinjau sebelum digabung.
+5. **Tunggu review dan setuju perubahan**
+   PR akan ditinjau oleh kontributor lain sebelum digabung ke branch main.
