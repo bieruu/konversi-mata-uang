@@ -549,6 +549,11 @@ int main()
         {
             clearscreen();
             cout << "\nTerima Kasih telah menggunakan program konversi mata uang!\n";
+            // Bersihkan buffer cin dari newline yang tersisa
+            cin.clear();
+            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            cout << "Tekan ENTER untuk menutup terminal..." << flush;
+            cin.get();
             jalan = false;
         }
 
